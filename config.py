@@ -1,0 +1,155 @@
+import os
+from threading import Event, main_thread
+ROWS, COLUMNS = os.popen('stty size', 'r').read().split()
+ROWS, COLUMNS = int(ROWS)-3, int(COLUMNS)
+MAP_LENGTH = 5*COLUMNS
+DIMENSIONAL_ARRAY = [[' ' for x in range(1, MAP_LENGTH + 1)] for y in range(1, ROWS + 1)]
+OBJECT_ARRAY = [[0 for _ in range(1, MAP_LENGTH + 1)] for _ in range(1, ROWS + 1)]
+# MAP_ARRAY = [[' ' for _ in range(1, 3*COLUMNS+1)] for _ in range(1, ROWS+1)]
+
+
+# Define all the required colors
+COLORS = {
+    'Black': '\x1b[0;30m',
+    'Blue': '\x1b[1;34m',
+    'Green': '\x1b[0;32m',
+    'Cyan': '\x1b[0;36m',
+    'Red': '\x1b[1;31m',
+    'Purple': '\x1b[0;35m',
+    'Brown': '\x1b[0;33m',
+    'Gray': '\x1b[0;37m',
+    'Pink': '\x1b[38;5;200m',
+    'Dark Gray': '\x1b[1;30m',
+    'Light Blue': '\x1b[1;34m',
+    'Light Green': '\x1b[1;32m',
+    'Light Cyan': '\x1b[1;36m',
+    'Light Red': '\x1b[1;31m',
+    'Light Purple': '\x1b[1;35m',
+    'Yellow': '\x1b[1;33m',
+    'Light Grey': '\x1b[1;37m',
+    'Bridge Color': '\x1b[48;5;130m',
+    'Bullets Color': '\x1b[38;5;208m',
+    'Extras Bridge': '\x1b[38;5;82m',
+    'Water Color': '\x1b[48;5;39m',
+    'Fish Color': '\x1b[38;5;130m',
+    'Moving Bridges': '\x1b[48;5;94m'
+}
+
+
+# Define all the required global variables
+END_COLOR = '\033[0m'
+TITLE = COLORS['Blue'] + 'SUPER MARIO' + END_COLOR
+SPACES_BEFORE_TITLE = int(COLUMNS / 2 - len(TITLE) / 2)
+INITIAL_SCORE = 0
+SCORE_TITLE = COLORS['Purple'] + "SCORE" + END_COLOR
+TIME = COLORS['Green'] + "⌛" + END_COLOR
+LEVEL_I_TITLE = COLORS['Pink'] + 'LEVEL I' + END_COLOR
+COIN = COLORS['Yellow'] + '💰' + END_COLOR
+ENEMY = COLORS['Red'] + '^' + END_COLOR
+BRIDGE = COLORS['Bridge Color'] + '_' + END_COLOR
+DOWN_WALL = COLORS['Brown'] + '░' + END_COLOR
+UP_WALL = COLORS['Light Green'] + '▓' + END_COLOR
+FLAG_POST = '|'
+STONE = COLORS['Bullets Color'] + '⚽' + END_COLOR
+WATER = COLORS['Water Color'] + '░' + END_COLOR
+MOVING_BRIDGES = COLORS['Moving Bridges'] + '|' + END_COLOR
+# PLAYER = '\033[1;34;' + '@'
+PLAYER = COLORS['Cyan'] + '@' + END_COLOR
+DEFAULT_LIVES = 5
+DEFAULT_NO_OF_STONES = 3
+DEFAULT_TIMEOUT = 200
+LOVE = COLORS['Red'] + '❤️' + END_COLOR
+EXTRAS_BRIDGE = COLORS['Extras Bridge'] + '░' + END_COLOR
+FISH = COLORS['Fish Color'] + COLORS['Water Color'] + '🐠' + END_COLOR
+THRONES = '┴'
+TOP = int(4 + ROWS / 20)
+bridge_list = []
+coins_list = []
+cloud_list = []
+Enemies_list = []
+holes_list = []
+sub_holes_list = []
+stones_list = []
+pole = []
+player = []
+extras = []
+lakes = []
+life = []
+fishes = []
+thrones_list = []
+moving_bridges = []
+left_pointer = [0, ]
+right_pointer = [COLUMNS, ]
+stop = Event()
+pause = Event()
+level_finished = Event()
+timeout = Event()
+player_killed = Event()
+checkpoints = []
+
+
+class _Getch:
+    """Gets a single character from standard input.  Does not echo to the screen."""
+    def __init__(self):
+        try:
+            self.impl = _GetchWindows()
+        except ImportError:
+            self.impl = _GetchUnix()
+
+    def __call__(self):
+        return self.impl()
+
+
+class GetchUnix:
+    def __init__(self):
+        import tty
+        import sys
+
+    def __call__(self):
+        import sys
+        import tty
+        import termios
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            # i, o, e = select.select([sys.stdin], [], [], 0.5)
+            # if (i):
+            ch = sys.stdin.read(1)
+            # else:
+            # ch = 'No'
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
+
+
+class _GetchWindows:
+    def __init__(self):
+        import msvcrt
+
+    def __call__(self):
+        import msvcrt
+        return msvcrt.getch()
+
+
+def _music(action):
+    if main_thread().is_alive():
+        os.system('aplay -q ./Media/' + action + '.wav > /dev/null')
+    # os.system('aplay ~/Music/super\ mario/40.wav')
+
+
+def play_music_thread(action='start', no_thread=False, change=False):
+    if change:
+            os.system('killall -q aplay 2> /dev/null')
+    if not no_thread:
+        from threading import Thread
+        temp = Thread(target=_music, args=(action,))
+        temp.daemon = True
+        temp.start()
+    else:
+        _music(action)
+    # if change:
+    #     temp = Thread(target=_music, args=(action, ))
+    #     temp.daemon = True
+    #     temp.start()
+    return
