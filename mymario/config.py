@@ -1,3 +1,7 @@
+"""
+Config file for the game
+"""
+
 import os
 from threading import Event, main_thread
 ROWS, COLUMNS = os.popen('stty size', 'r').read().split()
@@ -140,7 +144,7 @@ def _music(action):
 
 def play_music_thread(action='start', no_thread=False, change=False):
     if change:
-            os.system('killall -q aplay 2> /dev/null')
+        os.system('killall -q aplay 2> /dev/null')
     if not no_thread:
         from threading import Thread
         temp = Thread(target=_music, args=(action,))

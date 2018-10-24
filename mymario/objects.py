@@ -1,10 +1,25 @@
-import config
+"""
+Contains Classes for movable and for non-movable regular objects
+"""
+
 from time import sleep
 from abc import ABC, abstractmethod
+import config
 
 
 class Obj:
+    """
+    A class for all regular objects
+    """
     def __init__(self, max_x, max_y, min_x, min_y, string):
+        """
+        Initialises the Object in the map in the given boundary with the given string
+        :param max_x: Maximum x-coordinate of the object
+        :param max_y: Maximum y-coordinate of the object
+        :param min_x: Minimum x-coordinate of the object
+        :param min_y: Minimum y-coordinate of the object
+        :param string: The boundary to be filled with
+        """
         self.max_x = max_x
         self.max_y = max_y
         self.min_x = min_x
@@ -14,6 +29,10 @@ class Obj:
         self.check_ends = False
 
     def update_dimensional_array(self):
+        """
+        Updates the object in  the map(DIMENSIONAL_ARRAY)
+        :return:
+        """
         for i in range(self.min_y, self.max_y + 1):
             for j in range(self.min_x, self.max_x+1):
                 if self.string:
@@ -21,9 +40,17 @@ class Obj:
                     config.OBJECT_ARRAY[i-1][j-1] = self
 
     def update(self):
+        """
+        Updates the object in  the map(DIMENSIONAL_ARRAY)
+        :return:
+        """
         self.update_dimensional_array()
 
     def remove(self):
+        """
+        Removes the object from the map(DIMENSIONAL_ARRAY)
+        :return:
+        """
         for i in range(self.min_y, self.max_y + 1):
             for j in range(self.min_x, self.max_x+1):
                 config.DIMENSIONAL_ARRAY[i-1][j-1] = ' '
@@ -31,15 +58,52 @@ class Obj:
 
 
 class MovableObjects(Obj, ABC):
+    """
+    A class for movable regular objects
+    """
     def __init__(self, max_x, max_y, min_x, min_y, string):
-        Obj.__init__(self,  max_x, max_y, min_x, min_y, string)
+        """
+        Initialises the Movable Object in the map in the given boundary with the given string
+        :param max_x: Maximum x-coordinate of the object
+        :param max_y: Minimum y-coordinate of the object
+        :param min_x: Maximum x-coordinate of the object
+        :param min_y: Minimum y-coordinate of the object
+        :param string: The boundary to be filled with
+        """
+        Obj.__init__(self, max_x, max_y, min_x, min_y, string)
         self.is_alive = True
 
     @abstractmethod
     def clash(self, clashed_with, object_clashed):
+        """
+        An Abstract method called when an object is clashed with other.
+        It has to be implemented by the class who inherits it
+        :param clashed_with: The string with which it is clashed
+        :param object_clashed: The object with which it is clashed
+        :return:
+        """
+        pass
+
+    @abstractmethod
+    def wrong_move(self):
+        """
+        An Abstract method called when a movable object makes a wrong move.
+        It has to be implemented by the class who inherits it
+        :return:
+        """
         pass
 
     def move(self, unit=1, sign_x=0, sign_y=0, horizontal=False, vertical=False, update=True):
+        """
+        A method to move the object
+        :param unit: Number of units to move
+        :param sign_x: Horizontal direction of movement
+        :param sign_y: Vertical direction of movement
+        :param horizontal: boolean whether to move horizontal or not
+        :param vertical: boolean whether to move horizontal or not
+        :param update: boolean whether to update the movement or not
+        :return:
+        """
         if not horizontal and not vertical:
             return
 
@@ -98,7 +162,7 @@ class MovableObjects(Obj, ABC):
                     pass
             if mrn:
                 mid = (config.left_pointer[0] + config.right_pointer[0])/2
-                if len(config.player) > 0:
+                if config.player:
                     if self == config.player[0] and horizontal and temp2 > self.min_x > mid:
                         if config.right_pointer[0] < config.MAP_LENGTH:
                             config.left_pointer[0] += 1
@@ -124,15 +188,35 @@ class MovableObjects(Obj, ABC):
                     sleep((unit % 10)/100)
 
     def kill(self):
+        """
+        Kills the object from the game. It cannot take re-birth
+        :return:
+        """
         self.is_alive = False
         self.remove()
 
 
 class Extras(Obj):
+    """
+    A class for bonus points in the bridges.
+    """
     def __init__(self, max_x, max_y, min_x, min_y, string, bonus):
+        """
+        Initialises the Bonus Object in the map in the given boundary with the given string
+        :param max_x: Maximum x-coordinate of the object
+        :param max_y: Minimum y-coordinate of the object
+        :param min_x: Maximum x-coordinate of the object
+        :param min_y: Minimum y-coordinate of the object
+        :param string: The boundary to be filled with
+        :param bonus: Bonus Point
+        """
         Obj.__init__(self, max_x, max_y, min_x, min_y, string)
         self.bonus = bonus
 
     def bonus_taken(self):
+        """
+        Called when the bonus is taken by user
+        :return:
+        """
         self.string = config.BRIDGE
         self.update()

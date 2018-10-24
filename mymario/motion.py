@@ -166,6 +166,9 @@ class Stones(MovableObjects):
     def move_down(self):
         self.move(100, sign_y=1, vertical=True)
 
+    def wrong_move(self):
+        pass
+
     def clash(self, clash_with, object_clashed):
         if clash_with == config.BRIDGE or clash_with == config.COIN or clash_with == config.FLAG_POST or clash_with == config.THRONES:
             self.kill()
@@ -189,6 +192,9 @@ class Enemies(MovableObjects):
         self.thread.daemon = True
         # sleep(1)
         self.thread.start()
+
+    def wrong_move(self):
+        pass
 
     def move_enemy(self):
         if self.is_alive:
@@ -271,6 +277,9 @@ class MovingBridges(MovableObjects):
         for i in range(self.min_x, self.max_x+1):
             if not config.DIMENSIONAL_ARRAY[temp][i-1] == ' ':
                 config.OBJECT_ARRAY[temp][i-1].move(unit=1, sign_x=0, sign_y=y, horizontal=False, vertical=True)
+
+    def wrong_move(self):
+        pass
 
     def clash(self, clashed_with, object_clashed):
         pass

@@ -1,8 +1,23 @@
+"""
+Contains classes for Irregular objects
+"""
+
 from config import DIMENSIONAL_ARRAY
 
 
 class IrregularObjects:
+    """
+    Class for Irregular Objects
+    """
     def __init__(self, max_x, max_y, min_x, min_y, lis):
+        """
+        Initialises the Object parameters in the map(DIMENSIONAL_ARRAY)
+        :param max_x: Maximum x-coordinate of the object
+        :param max_y: Minimum y-coordinate of the object
+        :param min_x: Maximum x-coordinate of the object
+        :param min_y: Minimum y-coordinate of the object
+        :param lis: A 2d list of object points
+        """
         self.max_x = max_x
         self.max_y = max_y
         self.min_x = min_x
@@ -11,6 +26,10 @@ class IrregularObjects:
         self.update()
 
     def update(self):
+        """
+        Updates the object in the map(DIMENSIONAL_ARRAY)
+        :return:
+        """
         for i in range(self.min_y, self.max_y + 1):
             for j in range(self.min_x, self.max_x + 1):
                 try:
@@ -19,6 +38,10 @@ class IrregularObjects:
                     pass
 
     def remove(self):
+        """
+        Removes the object from the map(DIMENSIONAL_ARRAY)
+        :return:
+        """
         for i in range(self.min_y+1, self.max_y+1):
             for j in range(self.min_x+1, self.max_x+1):
                 try:
@@ -27,6 +50,10 @@ class IrregularObjects:
                     pass
 
     def move_cloud(self):
+        """
+        Moves the Irregular Object
+        :return:
+        """
         self.remove()
         self.min_x -= 1
         self.max_x -= 1
@@ -34,7 +61,11 @@ class IrregularObjects:
 
 
 def print_cloud():
-    cloud_str = '''
+    """
+    Break down the string of irregular object to a 2d list
+    :return:
+    """
+    cloud_str = r'''
     _/\  /\/\/\  /^\  
     \  \/      \/   \ 
     /               / 
@@ -65,6 +96,3 @@ def print_cloud():
     #         print(j, end='')
     #     print()
     return cloud_list
-
-
-def print_mountain(): pass
