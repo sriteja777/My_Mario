@@ -14,12 +14,12 @@ class Players(MovableObjects):
     """
     def __init__(self, max_x, max_y, min_x, min_y, string):
         """
-        Initialise the player
+        Initialise the PLAYER_OBJ
         :param max_x: Maximum x-coordinate of the object
         :pa ram max_y: Minimum y-coordinate of the object
         :param min_x: Maximum x-coordinate of the object
         :param min_y: Minimum y-coordinate of the object
-        :param string: String of the player
+        :param string: String of the PLAYER_OBJ
         """
         MovableObjects.__init__(self, max_x, max_y, min_x, min_y, string)
         self._lives = config.DEFAULT_LIVES
@@ -30,14 +30,14 @@ class Players(MovableObjects):
 
     def move_down(self):
         """
-        Moves player down by 1 unit
+        Moves PLAYER_OBJ down by 1 unit
         :return:
         """
         self.move(100, sign_y=1, vertical=True)
 
     def move_left(self):
         """
-        Moves player left by 1 unit
+        Moves PLAYER_OBJ left by 1 unit
         :return:
         """
         if self.min_x == 1:
@@ -47,7 +47,7 @@ class Players(MovableObjects):
 
     def move_right(self):
         """
-        Moves player right by 1 unit
+        Moves PLAYER_OBJ right by 1 unit
         :return:
         """
         if self.max_x == config.MAP_LENGTH:
@@ -57,12 +57,12 @@ class Players(MovableObjects):
 
     def move_up(self, dist=10, down=True):
         """
-        Moves player up
-        :param dist: Units by which the player should move up
+        Moves PLAYER_OBJ up
+        :param dist: Units by which the PLAYER_OBJ should move up
         :param down: boolean whether to move down after moving up
         :return:
         """
-        config.control_music[0].play_music_for_action('Player jumped')
+        config.CONTROL_MUSIC[0].play_music_for_action('Player jumped')
         self.move(unit=dist, sign_y=-1, vertical=True)
         if down:
             self.move(unit=100, sign_y=1, vertical=True)
@@ -70,20 +70,20 @@ class Players(MovableObjects):
 
     def move_up_right(self):
         """
-        Moves player simultaneously up and right by 8 units each side
+        Moves PLAYER_OBJ simultaneously up and right by 8 units each side
         :return:
         """
-        config.control_music[0].play_music_for_action('Player jumped')
+        config.CONTROL_MUSIC[0].play_music_for_action('Player jumped')
         self.move(8, sign_x=1, sign_y=-1, horizontal=True, vertical=True)
         self.move(100, sign_x=1, sign_y=1, horizontal=True, vertical=True)
         self.move_down()
 
     def move_up_left(self):
         """
-        Moves player simultaneously up and left by 8 units each side
+        Moves PLAYER_OBJ simultaneously up and left by 8 units each side
         :return:
         """
-        config.control_music[0].play_music_for_action('Player jumped')
+        config.CONTROL_MUSIC[0].play_music_for_action('Player jumped')
         self.move(8, -1, -1, horizontal=True, vertical=True)
         self.move(100, -1, 1, horizontal=True, vertical=True)
         self.move_down()
@@ -99,21 +99,21 @@ class Players(MovableObjects):
         #     print('sdfsdf')
         if self._lives == 1:
             config.pause.set()
-            config.control_music[0].play_music_for_action('Game over', no_thread=True, change=True)
+            config.CONTROL_MUSIC[0].play_music_for_action('Game over', no_thread=True, change=True)
             config.stop.set()
             return
-        config.control_music[0].play_music_for_action('Player lost life',
+        config.CONTROL_MUSIC[0].play_music_for_action('Player lost LIFE',
                                                       no_thread=True, change=True)
         _new = 'Player at start'
-        if self.min_x < config.holes_list[2].max_x:
+        if self.min_x < config.HOLES_LIST[2].max_x:
             _new = 'Player at start'
-        elif self.min_x < config.lakes[0].max_x:
+        elif self.min_x < config.LAKES[0].max_x:
             _new = 'Player at lake'
         elif self.min_x < config.MAP_LENGTH:
             _new = 'Player at thrones'
-        config.control_music[0].play_music_for_action(_new, change=True)
+        config.CONTROL_MUSIC[0].play_music_for_action(_new, change=True)
         self.update_live(-1)
-        for check in config.checkpoints[-1::-1]:
+        for check in config.CHECKPOINTS[-1::-1]:
             if self.max_x >= check[0]:
                 self.min_x = check[0]
                 self.max_x = check[0] + 1
@@ -128,7 +128,7 @@ class Players(MovableObjects):
 
     def update_live(self, value):
         """
-        Increments the lives of player by the given value .
+        Increments the lives of PLAYER_OBJ by the given value .
         :param value: value to be incremented
         :return:
         """
@@ -136,20 +136,20 @@ class Players(MovableObjects):
 
     def get_lives(self):
         """
-        Get number of lives of player
+        Get number of lives of PLAYER_OBJ
         :return:
         """
         return self._lives
 
     def clash(self, clashed_with, object_clashed):
         """
-        Called when player clashes with a certain object
+        Called when PLAYER_OBJ clashes with a certain object
         :param clashed_with: The string with which it is clashed
         :param object_clashed: The object with which it is clashed
         :return:
         """
         if clashed_with == config.COIN:
-            config.control_music[0].play_music_for_action('Player got coin')
+            config.CONTROL_MUSIC[0].play_music_for_action('Player got coin')
             # config.pause.set()
             self.score += 1
             return True
@@ -157,7 +157,7 @@ class Players(MovableObjects):
         if clashed_with in (config.BRIDGE, config.UP_WALL, config.DOWN_WALL):
             return False
         if clashed_with == config.FLAG_POST:
-            config.control_music[0].play_music_for_action('Game completed',
+            config.CONTROL_MUSIC[0].play_music_for_action('Game completed',
                                                           no_thread=True, change=True)
             config.stop.set()
 
@@ -166,7 +166,7 @@ class Players(MovableObjects):
 
         if clashed_with == config.ENEMY:
             if self.max_y < object_clashed.min_y:
-                config.control_music[0].play_music_for_action('Player jumped on enemy')
+                config.CONTROL_MUSIC[0].play_music_for_action('Player jumped on enemy')
                 self.score += 2
                 object_clashed.kill()
                 return True
@@ -175,7 +175,7 @@ class Players(MovableObjects):
 
         if clashed_with == config.EXTRAS_BRIDGE:
             if self.min_y > object_clashed.max_y:
-                config.control_music[0].play_music_for_action('Player got power up')
+                config.CONTROL_MUSIC[0].play_music_for_action('Player got power up')
                 if object_clashed.bonus == config.LOVE:
                     self.update_live(1)
                 elif object_clashed.bonus == config.STONE:
@@ -186,11 +186,11 @@ class Players(MovableObjects):
                 return False
 
         if clashed_with == config.LOVE:
-            config.control_music[0].play_music_for_action('Player got life')
+            config.CONTROL_MUSIC[0].play_music_for_action('Player got LIFE')
             self.update_live(1)
             return True
         if clashed_with == config.TIME:
-            config.control_music[0].play_music_for_action('Player got time')
+            config.CONTROL_MUSIC[0].play_music_for_action('Player got time')
             self.time += 10
             return True
         if clashed_with == config.WATER:
@@ -215,7 +215,7 @@ class Stones(MovableObjects):
         :param min_y: Minimum y-coordinate of the Stone
         :param string: String of the stone
         """
-        config.control_music[0].play_music_for_action('Player launched stones')
+        config.CONTROL_MUSIC[0].play_music_for_action('Player launched stones')
         MovableObjects.__init__(self, max_x, max_y, min_x, min_y, string)
 
     def move_stone(self):
@@ -223,11 +223,11 @@ class Stones(MovableObjects):
         Moves the stone based on its current position
         :return:
         """
-        if self.max_x >= config.right_pointer[0] or self.min_y > config.sub_holes_list[0].max_y:
+        if self.max_x >= config.right_pointer[0] or self.min_y > config.SUB_HOLES_LIST[0].max_y:
             self.kill()
             return
-        if self.min_y >= config.sub_holes_list[0].min_y and \
-                self.min_x == config.sub_holes_list[0].max_x-1:
+        if self.min_y >= config.SUB_HOLES_LIST[0].min_y and \
+                self.min_x == config.SUB_HOLES_LIST[0].max_x-1:
             self.kill()
             return
         if config.DIMENSIONAL_ARRAY[self.min_y][self.max_x-1] == config.WATER:
@@ -267,10 +267,10 @@ class Stones(MovableObjects):
             self.kill()
             return False
         if clashed_with == config.ENEMY:
-            config.control_music[0].play_music_for_action('Stone hit enemy')
+            config.CONTROL_MUSIC[0].play_music_for_action('Stone hit enemy')
             object_clashed.kill()
             self.kill()
-            config.player[0].score += 2
+            config.PLAYER_OBJ[0].score += 2
             return False
         return False
 

@@ -27,9 +27,9 @@ class Music:
             "Game completed": "finished",
             "Player jumped on enemy": "jumponenemy",
             "Player got power up": "powerup",
-            "Player got life": "gotlife",
+            "Player got LIFE": "gotlife",
             "Player got time": "gottime",
-            "Player lost life": "lostlife",
+            "Player lost LIFE": "lostlife",
             "Player launched stones": "stones",
             "Stone hit enemy": "stoneonenemy"
         }

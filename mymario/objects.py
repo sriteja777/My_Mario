@@ -163,8 +163,8 @@ class MovableObjects(Obj, ABC):
                     pass
             if mrn:
                 mid = (config.left_pointer[0] + config.right_pointer[0])/2
-                if config.player:
-                    if self == config.player[0] and horizontal and temp2 > self.min_x > mid:
+                if config.PLAYER_OBJ:
+                    if self == config.PLAYER_OBJ[0] and horizontal and temp2 > self.min_x > mid:
                         if config.right_pointer[0] < config.MAP_LENGTH:
                             config.left_pointer[0] += 1
                             config.right_pointer[0] += 1

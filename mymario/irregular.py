@@ -91,7 +91,7 @@ def print_cloud():
             temp.append(cloud_str[i])
         i += 1
 
-    # for i in cloud_list:
+    # for i in CLOUD_LIST:
     #     for j in i:
     #         print(j, end='')
     #     print()
