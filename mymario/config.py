@@ -4,9 +4,10 @@ Config file for the game
 
 import os
 from threading import Event, main_thread
+
 ROWS, COLUMNS = os.popen('stty size', 'r').read().split()
-ROWS, COLUMNS = int(ROWS)-3, int(COLUMNS)
-MAP_LENGTH = 5*COLUMNS
+ROWS, COLUMNS = int(ROWS) - 3, int(COLUMNS)
+MAP_LENGTH = 5 * COLUMNS
 DIMENSIONAL_ARRAY = [[' ' for x in range(1, MAP_LENGTH + 1)] for y in range(1, ROWS + 1)]
 OBJECT_ARRAY = [[0 for _ in range(1, MAP_LENGTH + 1)] for _ in range(1, ROWS + 1)]
 # MAP_ARRAY = [[' ' for _ in range(1, 3*COLUMNS+1)] for _ in range(1, ROWS+1)]
@@ -38,7 +39,6 @@ COLORS = {
     'Fish Color': '\x1b[38;5;130m',
     'Moving Bridges': '\x1b[48;5;94m'
 }
-
 
 # Define all the required global variables
 END_COLOR = '\033[0m'
@@ -92,6 +92,7 @@ timeout = Event()
 player_killed = Event()
 checkpoints = []
 control_music = []
+
 
 def getch_unix():
     """
