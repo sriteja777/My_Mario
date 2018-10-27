@@ -66,6 +66,7 @@ LOVE = COLORS['Red'] + '❤️' + END_COLOR
 EXTRAS_BRIDGE = COLORS['Extras Bridge'] + '░' + END_COLOR
 FISH = COLORS['Fish Color'] + COLORS['Water Color'] + '🐠' + END_COLOR
 THRONES = '┴'
+MUSIC_FILES_PATH = './Media/'
 TOP = int(4 + ROWS / 20)
 bridge_list = []
 coins_list = []
@@ -90,59 +91,45 @@ level_finished = Event()
 timeout = Event()
 player_killed = Event()
 checkpoints = []
+control_music = []
 
-
-class _Getch:
-    """Gets a single character from standard input.  Does not echo to the screen."""
-    def __init__(self):
-        try:
-            self.impl = _GetchWindows()
-        except ImportError:
-            self.impl = _GetchUnix()
-
-    def __call__(self):
-        return self.impl()
-
-
-class GetchUnix:
-    def __init__(self):
-        import tty
-        import sys
-
-    def __call__(self):
-        import sys
-        import tty
-        import termios
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(sys.stdin.fileno())
-            # i, o, e = select.select([sys.stdin], [], [], 0.5)
-            # if (i):
-            ch = sys.stdin.read(1)
-            # else:
-            # ch = 'No'
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
-
-
-class _GetchWindows:
-    def __init__(self):
-        import msvcrt
-
-    def __call__(self):
-        import msvcrt
-        return msvcrt.getch()
+def getch_unix():
+    """
+    Get the singe character typed on terminal on Unix-based systems
+    :return: Single character typed during game
+    """
+    import sys
+    import tty
+    import termios
+    file_desc = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(file_desc)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        char = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(file_desc, termios.TCSADRAIN, old_settings)
+    return char
 
 
 def _music(action):
+    """
+    Plays the given music filename
+    :param action:
+    :return:
+    """
     if main_thread().is_alive():
         os.system('aplay -q ./Media/' + action + '.wav > /dev/null')
     # os.system('aplay ~/Music/super\ mario/40.wav')
 
 
 def play_music_thread(action='start', no_thread=False, change=False):
+    """
+    Plays the given music
+    :param action: Music file name to play
+    :param no_thread: boolean whether to play music in parallel or not
+    :param change: boolean whether to change the correct music or not
+    :return:
+    """
     if change:
         os.system('killall -q aplay 2> /dev/null')
     if not no_thread:
@@ -156,4 +143,3 @@ def play_music_thread(action='start', no_thread=False, change=False):
     #     temp = Thread(target=_music, args=(action, ))
     #     temp.daemon = True
     #     temp.start()
-    return

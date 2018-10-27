@@ -2,8 +2,9 @@
 Contains Classes for movable and for non-movable regular objects
 """
 
-from time import sleep
 from abc import ABC, abstractmethod
+from time import sleep
+
 import config
 
 

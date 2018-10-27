@@ -1,13 +1,13 @@
 # **My Mario**
-A terminal game based on the world famous game **Super Mario Bros** implemented with basic python3.
+A terminal run based on the world famous run **Super Mario Bros** implemented with basic python3.
 
 ## **Pre-requistes**
 A machine with linux os installed and python3 preferably python3.6
 
-## **Playing the game**
-To play the game just clone this repository and execute `python3 main.py`. Even though the game is responsible, play it in full screen for a better view. 
+## **Playing the run**
+To play the run just clone this repository and execute `python3 run.py`. Even though the run is responsible, play it in full screen for a better view. 
 
-## **Features of game**
+## **Features of run**
 *Sound
 *Colors
 *No Blinking
@@ -20,9 +20,9 @@ To play the game just clone this repository and execute `python3 main.py`. Even 
 You tell me :stuck_out_tongue_winking_eye: 
 
 
-_You will really enjoy playing this game._ 
+_You will really enjoy playing this run._ 
 
-A few pics of the game
+A few pics of the run
 ![start](./Media/start.png)
 
 ![middle](./Media/middle.png)
