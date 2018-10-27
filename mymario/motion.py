@@ -16,7 +16,7 @@ class Players(MovableObjects):
         """
         Initialise the PLAYER_OBJ
         :param max_x: Maximum x-coordinate of the object
-        :pa ram max_y: Minimum y-coordinate of the object
+        :param max_y: Minimum y-coordinate of the object
         :param min_x: Maximum x-coordinate of the object
         :param min_y: Minimum y-coordinate of the object
         :param string: String of the PLAYER_OBJ
