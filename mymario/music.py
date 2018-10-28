@@ -45,7 +45,9 @@ class Music:
         :return:
         """
         if main_thread().is_alive():
-            os.system('aplay -q ' + MUSIC_FILES_PATH + filename + '.wav > /dev/null')
+            os.system('aplay -q --process-id-file aplay_pid.txt '
+                      + MUSIC_FILES_PATH + filename
+                      + '.wav > /dev/null 2>/dev/null')
 
     def play_music_for_action(self, action='Player at start ', no_thread=False, change=False):
         """

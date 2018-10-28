@@ -26,7 +26,7 @@ def decrease_time():
     :return:
     """
     if c.PLAYER_OBJ[0].time > 0:
-        if not c.pause.is_set():
+        if not c.pause.is_set() and c.PLAYER_OBJ[0].is_alive:
             c.PLAYER_OBJ[0].time -= 1
 
         temp = Timer(1, decrease_time)
@@ -77,8 +77,9 @@ def create_level1_map():
     for x_pos in range(0, 15):
         for y_pos in range(15 - x_pos, 15):
             cross_bridge_list[x_pos][y_pos] = c.BRIDGE
-    c.BRIDGE_LIST.append(IrregularObjects(rand_x + 6, up_wall.min_y - 1, rand_x - 6,
-                                          up_wall.min_y - 14, cross_bridge_list))
+    c.BRIDGE_LIST.append(IrregularObjects(
+        {'max_x': rand_x + 6, 'max_y': up_wall.min_y - 1, 'min_x': rand_x - 6,
+         'min_y': up_wall.min_y - 14}, cross_bridge_list))
 
     # Create EXTRAS
     mid = int((c.BRIDGE_LIST[1].min_x + c.BRIDGE_LIST[1].max_x) / 2)
@@ -136,11 +137,15 @@ def create_level1_map():
     rand_x = randrange(1, c.COLUMNS)
     rand_x_2 = randrange(c.COLUMNS, 2 * c.COLUMNS)
     rand_x_3 = randrange(2 * c.COLUMNS, 3 * c.COLUMNS)
-    c.CLOUD_LIST.append(IrregularObjects(len(cloud[0]) + rand_x, 5 + len(cloud), rand_x, 1, cloud))
-    c.CLOUD_LIST.append(
-        IrregularObjects(len(cloud[0]) + rand_x_2, 4 + len(cloud), rand_x_2, 2, cloud))
-    c.CLOUD_LIST.append(
-        IrregularObjects(len(cloud[0]) + rand_x_3, 6 + len(cloud), rand_x_3, 1, cloud))
+    c.CLOUD_LIST.append(IrregularObjects(
+        {'max_x': len(cloud[0]) + rand_x, 'max_y': 5 + len(cloud), 'min_x': rand_x, 'min_y': 1},
+        cloud))
+    c.CLOUD_LIST.append(IrregularObjects(
+        {'max_x': len(cloud[0]) + rand_x_2, 'max_y': 4 + len(cloud), 'min_x': rand_x_2, 'min_y': 2},
+        cloud))
+    c.CLOUD_LIST.append(IrregularObjects(
+        {'max_x': len(cloud[0]) + rand_x_3, 'max_y': 6 + len(cloud), 'min_x': rand_x_3, 'min_y': 1},
+        cloud))
 
     # Create Enemies
     c.ENEMIES_LIST.append(Enemies(c.SUB_HOLES_LIST[0].max_x - 2, c.SUB_HOLES_LIST[0].max_y,
@@ -228,7 +233,8 @@ def make_updates():
         temp.start()
         if not stone.is_alive:
             c.STONES_LIST.remove(stone)
-    if not c.CONTROL_MUSIC[0].player_crossed_start and c.PLAYER_OBJ[0].min_x > c.HOLES_LIST[2].max_x:
+    if not c.CONTROL_MUSIC[0].player_crossed_start and \
+            c.PLAYER_OBJ[0].min_x > c.HOLES_LIST[2].max_x:
         c.CONTROL_MUSIC[0].player_crossed_start = True
         c.CONTROL_MUSIC[0].play_music_for_action('Player at lake', change=True)
     if not c.CONTROL_MUSIC[0].player_crossed_lake and c.PLAYER_OBJ[0].min_x > c.LAKES[0].max_x:
@@ -259,7 +265,8 @@ def make_updates():
         print('\r', end='')
     print('\r' + c.SCORE_TITLE + ": " + str(c.PLAYER_OBJ[0].score),
           c.TIME + ': ' + str(c.PLAYER_OBJ[0].time), c.LEVEL_I_TITLE,
-          c.STONE + ' * ' + str(c.PLAYER_OBJ[0].stones), c.LOVE + ' *' + str(c.PLAYER_OBJ[0].get_lives()),
+          c.STONE + ' * ' + str(c.PLAYER_OBJ[0].stones),
+          c.LOVE + ' *' + str(c.PLAYER_OBJ[0].get_lives()),
           sep=' ' * fourth)
     print('\r' + ' ' * c.SPACES_BEFORE_TITLE, c.TITLE)
 
@@ -309,6 +316,10 @@ def get_input():
                 c.PLAYER_OBJ[0].move_up_left()
             elif k == 'f':
                 launch_stones()
+        if c.timeout.is_set():
+            break
+        if c.stop.is_set():
+            break
 
 
 def exit_game():
@@ -322,6 +333,7 @@ def exit_game():
     os.system('reset')
     last_string = "Thanks for playing my mario game. Your score: " + str(c.PLAYER_OBJ[0].score)
     print(last_string.center(c.COLUMNS))
+    os.system('killall -q aplay 2 >/dev/null')
     exit(0)
 
 
@@ -359,7 +371,11 @@ def run():
     # Initiate the screen
     Obj(c.COLUMNS, c.ROWS, 1, 3, ' ')
     up_wall, _ = create_level1_map()
-    c.PLAYER_OBJ.append(Players(4, up_wall.min_y - 1, 3, up_wall.min_y - 2, c.PLAYER))
+    # exit(0)
+    c.PLAYER_OBJ.append(
+        Players({'max_x': 4, 'max_y': up_wall.min_y - 1, 'min_x': 3, 'min_y': up_wall.min_y - 2},
+                c.PLAYER)
+    )
 
     # Create CHECKPOINTS
     c.CHECKPOINTS.append((c.PLAYER_OBJ[0].min_x, c.PLAYER_OBJ[0].max_y))

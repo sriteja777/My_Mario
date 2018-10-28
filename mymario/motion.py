@@ -12,16 +12,15 @@ class Players(MovableObjects):
     """
     A class for Player
     """
-    def __init__(self, max_x, max_y, min_x, min_y, string):
+    def __init__(self, boundary, string):
         """
-        Initialise the PLAYER_OBJ
-        :param max_x: Maximum x-coordinate of the object
-        :param max_y: Minimum y-coordinate of the object
-        :param min_x: Maximum x-coordinate of the object
-        :param min_y: Minimum y-coordinate of the object
-        :param string: String of the PLAYER_OBJ
+        Initialises player in the Map
+        :param boundary: A dict with initial position of the player having keys
+                         max_x, max_y, min_x, min_y
+        :param string:
         """
-        MovableObjects.__init__(self, max_x, max_y, min_x, min_y, string)
+        MovableObjects.__init__(self, boundary['max_x'], boundary['max_y'],
+                                boundary['min_x'], boundary['min_y'], string)
         self._lives = config.DEFAULT_LIVES
         self.stones = config.DEFAULT_NO_OF_STONES
         self.score = config.INITIAL_SCORE
@@ -296,8 +295,9 @@ class Enemies(MovableObjects):
 
         self.thread = Thread(target=self.move_enemy)
         self.thread.daemon = True
-        # sleep(1)
+
         self.thread.start()
+        # print(self.thread.name, self.range_x2, self.range_x1)
 
     def wrong_move(self):
         """
@@ -312,6 +312,8 @@ class Enemies(MovableObjects):
         :return:
         """
         if self.is_alive:
+            if self.range_x2 - self.range_x1 <= 1:
+                return
             for _ in range(self.range_x1, self.range_x2):
                 if self.min_x > self.range_x1:
                     if self.is_alive:

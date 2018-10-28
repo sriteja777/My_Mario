@@ -9,19 +9,17 @@ class IrregularObjects:
     """
     Class for Irregular Objects
     """
-    def __init__(self, max_x, max_y, min_x, min_y, lis):
+    def __init__(self, boundary, lis):
         """
-        Initialises the Object parameters in the map(DIMENSIONAL_ARRAY)
-        :param max_x: Maximum x-coordinate of the object
-        :param max_y: Minimum y-coordinate of the object
-        :param min_x: Maximum x-coordinate of the object
-        :param min_y: Minimum y-coordinate of the object
+        Initialises the Object parameters in the map
+        :param boundary: A dict with initial position of the player having keys
+                         max_x, max_y, min_x, min_y
         :param lis: A 2d list of object points
         """
-        self.max_x = max_x
-        self.max_y = max_y
-        self.min_x = min_x
-        self.min_y = min_y
+        self.max_x = boundary['max_x']
+        self.max_y = boundary['max_y']
+        self.min_x = boundary['min_x']
+        self.min_y = boundary['min_y']
         self.lis = lis
         self.update()
 
