@@ -2,6 +2,15 @@
 Initialises the game
 """
 
-import game
+# import objects
+# import irregular
+# import music
+# import motion
+# import game
 
-game.run()
+# import config
+
+# if __name__ == '__main__':
+#     game.run()
+
+__all__ = ["motion", "objects", "irregular", "game", "music", "config"]

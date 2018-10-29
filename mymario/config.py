@@ -4,7 +4,7 @@ Config file for the game
 
 import os
 from threading import Event, main_thread
-
+print(os.popen('stty size', 'r').read().split())
 ROWS, COLUMNS = os.popen('stty size', 'r').read().split()
 ROWS, COLUMNS = int(ROWS) - 3, int(COLUMNS)
 MAP_LENGTH = 5 * COLUMNS

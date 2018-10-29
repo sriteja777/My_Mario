@@ -8,7 +8,7 @@ import config
 from objects import MovableObjects
 
 
-class Players(MovableObjects):
+class Player(MovableObjects):
     """
     A class for Player
     """

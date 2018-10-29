@@ -8,7 +8,7 @@ from time import sleep
 
 import config as c
 from irregular import IrregularObjects, print_cloud
-from motion import Players, Stones, Enemies, MovingBridges
+from motion import Player, Stones, Enemies, MovingBridges
 from music import Music
 from objects import Obj, Extras
 
@@ -373,8 +373,8 @@ def run():
     up_wall, _ = create_level1_map()
     # exit(0)
     c.PLAYER_OBJ.append(
-        Players({'max_x': 4, 'max_y': up_wall.min_y - 1, 'min_x': 3, 'min_y': up_wall.min_y - 2},
-                c.PLAYER)
+        Player({'max_x': 4, 'max_y': up_wall.min_y - 1, 'min_x': 3, 'min_y': up_wall.min_y - 2},
+               c.PLAYER)
     )
 
     # Create CHECKPOINTS
