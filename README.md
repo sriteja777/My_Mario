@@ -5,7 +5,7 @@ A terminal game based on the world famous game **Super Mario Bros** implemented 
 A machine with linux os installed and python3 preferably python3.6
 
 ## **Playing the game**
-To play the run just clone this repository and execute `python3 mymario/run.py`. Even though the game is responsible, play it in full screen for a better view. 
+To play the run just clone this repository and execute `python3 mymario/game.py`. Even though the game is responsible, play it in full screen for a better view. 
 
 ## **Features of game**
 *Sound
