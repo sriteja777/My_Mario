@@ -93,8 +93,6 @@ def create_level1_map():
 
     # Create holes
     rand_x = randrange(int(c.COLUMNS / 3), int((2 * c.COLUMNS) / 3))
-    print(down_wall.max_y - 2)
-    print(len(c.DIMENSIONAL_ARRAY))
     c.HOLES_LIST.append(Obj(rand_x + 5, down_wall.max_y - 2, rand_x, up_wall.min_y, ' '))
     c.SUB_HOLES_LIST.append(Obj(c.HOLES_LIST[0].max_x + 10, c.HOLES_LIST[0].max_y,
                                 c.HOLES_LIST[0].min_x, up_wall.min_y + 2, ' '))
@@ -161,7 +159,7 @@ def create_level1_map():
                 c.BRIDGE_LIST[3].min_y - 2, c.ENEMY, c.BRIDGE_LIST[3].min_x,
                 c.BRIDGE_LIST[3].max_x))
 
-    # Create enemies on bridges on lake
+    # Create enemies and bridges on lake
     mid = int((c.LAKES[0].min_x + c.LAKES[0].max_x) / 2)
     print(c.LAKES[0].min_y, c.LAKES[0].max_y)
     print('x_pos -> ', c.LAKES[0].min_x + 5, mid, 10)
