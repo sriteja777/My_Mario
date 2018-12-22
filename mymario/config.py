@@ -68,10 +68,10 @@ FISH = COLORS['Fish Color'] + COLORS['Water Color'] + '🐠' + END_COLOR
 THRONES = '┴'
 MUSIC_FILES_PATH = './Media/'
 TOP = int(4 + ROWS / 20)
-BRIDGE_LIST = []  # Done
-COINS_LIST = []  # Done
-CLOUD_LIST = []  # Done
-ENEMIES_LIST = []  # Done
+BRIDGE_LIST = []
+COINS_LIST = []
+CLOUD_LIST = []
+ENEMIES_LIST = []
 HOLES_LIST = []  # Done
 SUB_HOLES_LIST = []  # Done
 STONES_LIST = []  # Done
@@ -144,3 +144,4 @@ def play_music_thread(action='start', no_thread=False, change=False):
     #     temp = Thread(target=_music, args=(action, ))
     #     temp.daemon = True
     #     temp.start()
+
