@@ -36,7 +36,7 @@ class Level1Map(Map):
         :param rows:
         """
 
-        Map.__init__(self, columns, rows, 5*columns, {})
+        Map.__init__(self, columns, rows, 5*columns)
         self.fishes = []
         self.moving_bridges = []
         self.sub_holes = []
@@ -56,12 +56,12 @@ class Level1Map(Map):
         self.create_pole()
         self.create_lake_fishes()
         self.create_bridges()
-        self.create_lake_fishes()
         self.create_moving_bridges()
         self.create_holes()
-        self.create_pole()
         self.create_coins()
         self.create_enemies()
+        self.create_extras()
+        self.initial_player_position = {'max_x': 4, 'max_y': self.up_wall.min_y - 1, 'min_x': 3, 'min_y': self.up_wall.min_y - 2}
 
     def create_enemies(self):
         """
@@ -71,15 +71,15 @@ class Level1Map(Map):
                                     self.sub_holes[0].max_x - 3,
                                     self.sub_holes[0].max_y - 1, config.ENEMY,
                                     self.sub_holes[0].min_x,
-                                    self.sub_holes[0].max_x - 2))
+                                    self.sub_holes[0].max_x - 2, self.map_array, self.object_array))
         self.enemies.append(
             Enemies(self.holes[1].min_x - 1, self.up_wall.min_y - 1, self.holes[1].min_x - 2,
                     self.up_wall.min_y - 2,
-                    config.ENEMY, self.bridges[2].max_x + 1, self.holes[1].min_x - 1))
+                    config.ENEMY, self.bridges[2].max_x + 1, self.holes[1].min_x - 1, self.map_array, self.object_array))
         self.enemies.append(
             Enemies(self.bridges[3].max_x, self.bridges[3].min_y - 1, self.bridges[3].max_x - 1,
                     self.bridges[3].min_y - 2, config.ENEMY, self.bridges[3].min_x,
-                    self.bridges[3].max_x))
+                    self.bridges[3].max_x, self.map_array, self.object_array))
 
         # Create enemies and bridges on lake
         mid = int((self.lake.min_x + self.lake.max_x) / 2)
@@ -90,57 +90,57 @@ class Level1Map(Map):
         min_y = int(config.TOP + self.rows / 10)
         for x_pos, y_pos in zip(range(self.lake.min_x + 5, mid, 10),
                                 range(self.lake.min_y - 5, min_y, -int(self.rows / 10))):
-            self.bridges.append(Obj(x_pos + 3, y_pos, x_pos - 3, y_pos - 1, config.BRIDGE))
+            self.bridges.append(Obj(x_pos + 3, y_pos, x_pos - 3, y_pos - 1, config.BRIDGE, self.map_array, self.object_array))
             rand_x = randrange(x_pos - 3, x_pos + 3)
             self.enemies.append(
-                Enemies(rand_x + 1, y_pos - 2, rand_x, y_pos - 3, config.ENEMY, x_pos - 3, x_pos + 3))
+                Enemies(rand_x + 1, y_pos - 2, rand_x, y_pos - 3, config.ENEMY, x_pos - 3, x_pos + 3, self.map_array, self.object_array))
         store = self.bridges[-1]
         self.enemies[-1].kill()
         self.enemies.append(Enemies(store.max_x, store.min_y - 1, store.max_x - 1,
-                                      store.min_y - 2, config.ENEMY, store.max_x - 1, store.max_x))
+                                      store.min_y - 2, config.ENEMY, store.max_x - 1, store.max_x, self.map_array, self.object_array))
 
         for x_pos, y_pos in zip(range(self.lake.max_x - 5, mid, -10),
                                 range(self.lake.min_y - 5, min_y, -int(self.rows / 10))):
-            self.bridges.append(Obj(x_pos + 3, y_pos, x_pos - 3, y_pos - 1, config.BRIDGE))
+            self.bridges.append(Obj(x_pos + 3, y_pos, x_pos - 3, y_pos - 1, config.BRIDGE, self.map_array, self.object_array))
             rand_x = randrange(x_pos - 3, x_pos + 3)
             self.enemies.append(
-                Enemies(rand_x + 1, y_pos - 2, rand_x, y_pos - 3, config.ENEMY, x_pos - 3, x_pos + 3))
+                Enemies(rand_x + 1, y_pos - 2, rand_x, y_pos - 3, config.ENEMY, x_pos - 3, x_pos + 3, self.map_array, self.object_array))
         store_2 = self.bridges[-1]
-        self.bridges.append(Obj(store_2.min_x, store.max_y, store.max_x, store.min_y, config.BRIDGE))
+        self.bridges.append(Obj(store_2.min_x, store.max_y, store.max_x, store.min_y, config.BRIDGE, self.map_array, self.object_array))
         self.enemies[-1].kill()
         self.enemies.append(Enemies(store_2.min_x + 1, store_2.min_y - 1, store_2.min_x,
-                                      store_2.min_y - 2, config.ENEMY, store_2.min_x, store_2.min_x + 1))
+                                      store_2.min_y - 2, config.ENEMY, store_2.min_x, store_2.min_x + 1, self.map_array, self.object_array))
         mid = int((store.max_x + store_2.min_x) / 2)
-        self.lives.append(Obj(mid, config.TOP, mid, config.TOP, config.LOVE))
+        self.lives.append(Obj(mid, config.TOP, mid, config.TOP, config.LOVE, self.map_array, self.object_array))
 
     def create_coins(self):
         # Dependencies: Bridges, walls, holes
 
         mid = int((self.bridges[0].min_x + self.bridges[0].max_x) / 2)
         self.coins.append(
-            Obj(mid, self.bridges[0].min_y - 1, mid, self.bridges[0].min_y - 1, config.COIN))
+            Obj(mid, self.bridges[0].min_y - 1, mid, self.bridges[0].min_y - 1, config.COIN, self.map_array, self.object_array))
         mid = int((self.bridges[1].min_x + self.bridges[1].max_x) / 2)
 
         for x_pos, y_pos in zip(range(mid - 4, mid + 2, 2),
                                 range(self.bridges[1].min_y - 1, self.bridges[1].min_y - 4, -1)):
-            self.coins.append(Obj(x_pos, y_pos, x_pos, y_pos, config.COIN))
+            self.coins.append(Obj(x_pos, y_pos, x_pos, y_pos, config.COIN, self.map_array, self.object_array))
         for x_pos, y_pos in zip(range(mid + 2, mid + 8, 2),
                                 range(self.bridges[1].min_y - 2, self.bridges[1].min_y, 1)):
-            self.coins.append(Obj(x_pos, y_pos, x_pos, y_pos, config.COIN))
+            self.coins.append(Obj(x_pos, y_pos, x_pos, y_pos, config.COIN, self.map_array, self.object_array))
 
-        self.coins.append(Obj(self.sub_holes[0].max_x, self.sub_holes[0].max_y, self.sub_holes[0].max_x, self.sub_holes[0].max_y, config.TIME))
+        self.coins.append(Obj(self.sub_holes[0].max_x, self.sub_holes[0].max_y, self.sub_holes[0].max_x, self.sub_holes[0].max_y, config.TIME, self.map_array, self.object_array))
         for x_pos in range(self.holes[0].max_x + 5, self.bridges[2].min_x - 5, 3):
-            self.coins.append(Obj(x_pos, self.up_wall.min_y - 1, x_pos, self.up_wall.min_y - 1, config.COIN))
+            self.coins.append(Obj(x_pos, self.up_wall.min_y - 1, x_pos, self.up_wall.min_y - 1, config.COIN, self.map_array, self.object_array))
 
     def create_holes(self):
         # Dependencies: walls, bridges
 
         rand_x = randrange(int(self.columns / 3), int((2 * self.columns) / 3))
-        self.holes.append(Obj(rand_x + 5, self.down_wall.max_y - 2, rand_x, self.up_wall.min_y, ' '))
-        self.sub_holes.append(Obj(self.holes[0].max_x + 10, self.holes[0].max_y, self.holes[0].min_x, self.up_wall.min_y + 2, ' '))
+        self.holes.append(Obj(rand_x + 5, self.down_wall.max_y - 2, rand_x, self.up_wall.min_y, ' ', self.map_array, self.object_array))
+        self.sub_holes.append(Obj(self.holes[0].max_x + 10, self.holes[0].max_y, self.holes[0].min_x, self.up_wall.min_y + 2, ' ', self.map_array, self.object_array))
         rand_x = randrange(int((4 * self.columns) / 3) + 4, int(5 * self.columns / 3) - 4)
-        self.holes.append(Obj(rand_x + 4, self.rows, rand_x - 4, self.up_wall.min_y, ' '))
-        self.holes.append(Obj(self.bridges[5].max_x + 24, self.rows, self.bridges[5].max_x + 1, self.up_wall.min_y, ' '))
+        self.holes.append(Obj(rand_x + 4, self.rows, rand_x - 4, self.up_wall.min_y, ' ', self.map_array, self.object_array))
+        self.holes.append(Obj(self.bridges[5].max_x + 24, self.rows, self.bridges[5].max_x + 1, self.up_wall.min_y, ' ', self.map_array, self.object_array))
 
     def create_extras(self):
         # Dependencies: bridges
@@ -149,45 +149,45 @@ class Level1Map(Map):
         self.extras.append(
             Extras(mid + 1, self.bridges[1].max_y, mid - 1, self.bridges[1].min_y,
                    config.EXTRAS_BRIDGE,
-                   get_extra()))
+                   get_extra(), self.map_array, self.object_array))
         mid = int((self.bridges[3].min_x + self.bridges[3].max_x) / 2)
         self.extras.append(
             Extras(mid + 1, self.bridges[3].max_y, mid - 1, self.bridges[3].min_y,
                    config.EXTRAS_BRIDGE,
-                   get_extra()))
+                   get_extra(), self.map_array, self.object_array))
 
     def create_bridges(self):
         # Dependencies: walls
 
-        self.bridges.append(Obj(20, self.up_wall.min_y - 5, 14, self.up_wall.min_y - 7, config.BRIDGE))
-        self.bridges.append(Obj(40, self.up_wall.min_y - 5, 25, self.up_wall.min_y - 7, config.BRIDGE))
-        self.bridges.append(Obj(self.columns - 4, self.up_wall.min_y - 1, self.columns - 10, self.up_wall.min_y - 7, config.BRIDGE))
+        self.bridges.append(Obj(20, self.up_wall.min_y - 5, 14, self.up_wall.min_y - 7, config.BRIDGE, self.map_array, self.object_array))
+        self.bridges.append(Obj(40, self.up_wall.min_y - 5, 25, self.up_wall.min_y - 7, config.BRIDGE, self.map_array, self.object_array))
+        self.bridges.append(Obj(self.columns - 4, self.up_wall.min_y - 1, self.columns - 10, self.up_wall.min_y - 7, config.BRIDGE, self.map_array, self.object_array))
 
         rand_x = randrange(self.columns + 5, int(4 * self.columns / 3) - 5)
-        self.bridges.append(Obj(5 + rand_x, self.up_wall.min_y - 5, rand_x - 5, self.up_wall.min_y - 8, config.BRIDGE))
+        self.bridges.append(Obj(5 + rand_x, self.up_wall.min_y - 5, rand_x - 5, self.up_wall.min_y - 8, config.BRIDGE, self.map_array, self.object_array))
 
         rand_x = randrange(int(5 * self.columns / 3) + 1, 2 * self.columns - 2)
-        self.bridges.append(Obj(rand_x + 1, self.up_wall.min_y - 6, rand_x - 1, self.up_wall.min_y - 8, config.BRIDGE))
+        self.bridges.append(Obj(rand_x + 1, self.up_wall.min_y - 6, rand_x - 1, self.up_wall.min_y - 8, config.BRIDGE, self.map_array, self.object_array))
 
         rand_x = randrange(2 * self.columns + 6, int((7 * self.columns) / 3) - 6)
         cross_bridge_list = [[' ' for _ in range(0, 15)] for _ in range(0, 15)]
         for x_pos in range(0, 15):
             for y_pos in range(15 - x_pos, 15):
                 cross_bridge_list[x_pos][y_pos] = config.BRIDGE
-        self.bridges.append(IrregularObjects({'max_x': rand_x + 6, 'max_y': self.up_wall.min_y - 1, 'min_x': rand_x - 6,'min_y': self.up_wall.min_y - 14}, cross_bridge_list))
+        self.bridges.append(IrregularObjects({'max_x': rand_x + 6, 'max_y': self.up_wall.min_y - 1, 'min_x': rand_x - 6,'min_y': self.up_wall.min_y - 14}, cross_bridge_list, self.map_array, self.object_array))
 
     def create_lake_fishes(self):
         # Dependencies: walls
 
         min_x = int(8 * self.columns / 3)
         max_x = int(11 * self.columns / 3)
-        self.lake = Obj(max_x, self.down_wall.max_y - 1, min_x, self.up_wall.max_y, config.WATER)
+        self.lake = Obj(max_x, self.down_wall.max_y - 1, min_x, self.up_wall.max_y, config.WATER, self.map_array, self.object_array)
         rand_x = randrange(self.lake.min_x + 2, self.lake.max_x - 2)
         rand_y = self.lake.min_y + randrange(1, 4)
-        self.fishes.append(Obj(rand_x, rand_y, rand_x, rand_y, config.FISH))
+        self.fishes.append(Obj(rand_x, rand_y, rand_x, rand_y, config.FISH, self.map_array, self.object_array))
         rand_x = randrange(self.lake.min_x + 2, self.lake.max_x - 2)
         rand_y = self.lake.min_y + randrange(1, 4)
-        self.fishes.append(Obj(rand_x, rand_y, rand_x, rand_y, config.FISH))
+        self.fishes.append(Obj(rand_x, rand_y, rand_x, rand_y, config.FISH, self.map_array, self.object_array))
 
     def create_moving_bridges(self):
         # Dependencies: walls, lake
@@ -197,7 +197,7 @@ class Level1Map(Map):
         max_x = int((9 * self.columns) / 2)
 
         # Create Knifes
-        self.thrones.append(Obj(max_x, self.up_wall.max_y + 1, min_x, self.up_wall.max_y, config.THRONES))
+        self.thrones.append(Obj(max_x, self.up_wall.max_y + 1, min_x, self.up_wall.max_y, config.THRONES, self.map_array, self.object_array))
 
         min_y = config.TOP + 5
         max_y = self.lake.min_y - 5
@@ -205,13 +205,13 @@ class Level1Map(Map):
             rand_y = randrange(min_y, max_y + 1)
             self.moving_bridges.append(
                 MovingBridges(x_pos + length, rand_y, x_pos, rand_y,
-                              config.MOVING_BRIDGES, config.TOP + 5, self.lake.min_y - 5))
+                              config.MOVING_BRIDGES, config.TOP + 5, self.lake.min_y - 5, self.map_array, self.object_array))
 
     def create_walls(self):
         # Dependencies: None
 
-        self.down_wall = Obj(self.length, self.rows, 1, int((9 * self.rows) / 10), config.DOWN_WALL)
-        self.up_wall = Obj(config.MAP_LENGTH, self.down_wall.min_y - 1, 1, self.down_wall.min_y - 1, config.UP_WALL)
+        self.down_wall = Obj(self.length, self.rows, 1, int((9 * self.rows) / 10), config.DOWN_WALL, self.map_array, self.object_array)
+        self.up_wall = Obj(self.length, self.down_wall.min_y - 1, 1, self.down_wall.min_y - 1, config.UP_WALL, self.map_array, self.object_array)
 
     def create_clouds(self):
         # Dependencies: None
@@ -222,19 +222,19 @@ class Level1Map(Map):
         rand_x_3 = randrange(2 * self.columns, 3 * self.columns)
         self.clouds.append(IrregularObjects(
             {'max_x': len(cloud[0]) + rand_x, 'max_y': 5 + len(cloud), 'min_x': rand_x, 'min_y': 1},
-            cloud))
+            cloud, self.map_array, self.object_array))
         self.clouds.append(IrregularObjects(
             {'max_x': len(cloud[0]) + rand_x_2, 'max_y': 4 + len(cloud), 'min_x': rand_x_2,
              'min_y': 2},
-            cloud))
+            cloud, self.map_array, self.object_array))
         self.clouds.append(IrregularObjects(
             {'max_x': len(cloud[0]) + rand_x_3, 'max_y': 6 + len(cloud), 'min_x': rand_x_3,
              'min_y': 1},
-            cloud))
+            cloud, self.map_array, self.object_array))
 
     def create_pole(self):
         # Dependencies: Walls
-        self.pole = Obj(self.length - 5, self.up_wall.min_y - 1, self.length - 5, self.up_wall.min_y - 15, '|')
+        self.pole = Obj(self.length - 5, self.up_wall.min_y - 1, self.length - 5, self.up_wall.min_y - 15, '|', self.map_array, self.object_array)
 
     def get_features(self):
         """
