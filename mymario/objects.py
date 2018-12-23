@@ -12,7 +12,7 @@ class Obj:
     """
     A class for all regular objects
     """
-    def __init__(self, max_x, max_y, min_x, min_y, string):
+    def __init__(self, max_x, max_y, min_x, min_y, string, map_array=config.DIMENSIONAL_ARRAY, object_array=config.OBJECT_ARRAY):
         """
         Initialises the Object in the map in the given boundary with the given string
         :param max_x: Maximum x-coordinate of the object
@@ -21,6 +21,8 @@ class Obj:
         :param min_y: Minimum y-coordinate of the object
         :param string: The boundary to be filled with
         """
+        self.map_array = map_array
+        self.object_array = object_array
         self.max_x = max_x
         self.max_y = max_y
         self.min_x = min_x
@@ -29,7 +31,7 @@ class Obj:
         self.update_dimensional_array()
         self.check_ends = False
 
-    def update_dimensional_array(self):
+    def update_dimensional_array(self, map_array='', object_array=''):
         """
         Updates the object in  the map(DIMENSIONAL_ARRAY)
         :return:
@@ -37,32 +39,34 @@ class Obj:
         for i in range(self.min_y, self.max_y + 1):
             for j in range(self.min_x, self.max_x+1):
                 if self.string:
-                    config.DIMENSIONAL_ARRAY[i-1][j-1] = self.string
-                    config.OBJECT_ARRAY[i-1][j-1] = self
+                    self.map_array[i-1][j-1] = self.string
+                    self.object_array[i-1][j-1] = self
 
-    def update(self):
+    def update(self, map_array='', object_array=''):
         """
         Updates the object in  the map(DIMENSIONAL_ARRAY)
         :return:
         """
         self.update_dimensional_array()
 
-    def remove(self):
+    def remove(self, map_array='', object_array=''):
         """
         Removes the object from the map(DIMENSIONAL_ARRAY)
         :return:
         """
         for i in range(self.min_y, self.max_y + 1):
             for j in range(self.min_x, self.max_x+1):
-                config.DIMENSIONAL_ARRAY[i-1][j-1] = ' '
-                config.OBJECT_ARRAY[i-1][j-1] = self
+                # config.DIMENSIONAL_ARRAY[i-1][j-1] = ' '
+                # config.OBJECT_ARRAY[i-1][j-1] = self
+                self.map_array[i-1][j-1] = ' '
+                self.object_array[i-1][j-1] = self
 
 
 class MovableObjects(Obj, ABC):
     """
     A class for movable regular objects
     """
-    def __init__(self, max_x, max_y, min_x, min_y, string):
+    def __init__(self, max_x, max_y, min_x, min_y, string, map_array, object_array):
         """
         Initialises the Movable Object in the map in the given boundary with the given string
         :param max_x: Maximum x-coordinate of the object
@@ -71,7 +75,7 @@ class MovableObjects(Obj, ABC):
         :param min_y: Minimum y-coordinate of the object
         :param string: The boundary to be filled with
         """
-        Obj.__init__(self, max_x, max_y, min_x, min_y, string)
+        Obj.__init__(self, max_x, max_y, min_x, min_y, string, map_array, object_array)
         self.is_alive = True
 
     @abstractmethod
@@ -201,7 +205,7 @@ class Extras(Obj):
     """
     A class for bonus points in the bridges.
     """
-    def __init__(self, max_x, max_y, min_x, min_y, string, bonus):
+    def __init__(self, max_x, max_y, min_x, min_y, string, bonus, map_array=config.DIMENSIONAL_ARRAY, object_array=config.OBJECT_ARRAY):
         """
         Initialises the Bonus Object in the map in the given boundary with the given string
         :param max_x: Maximum x-coordinate of the object
@@ -211,7 +215,7 @@ class Extras(Obj):
         :param string: The boundary to be filled with
         :param bonus: Bonus Point
         """
-        Obj.__init__(self, max_x, max_y, min_x, min_y, string)
+        Obj.__init__(self, max_x, max_y, min_x, min_y, string, map_array, object_array)
         self.bonus = bonus
 
     def bonus_taken(self):
