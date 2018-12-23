@@ -54,6 +54,7 @@ BRIDGE = COLORS['Bridge Color'] + '_' + END_COLOR
 DOWN_WALL = COLORS['Brown'] + '░' + END_COLOR
 UP_WALL = COLORS['Light Green'] + '▓' + END_COLOR
 FLAG_POST = '|'
+LINE = '│'
 STONE = COLORS['Bullets Color'] + '⚽' + END_COLOR
 WATER = COLORS['Water Color'] + '░' + END_COLOR
 MOVING_BRIDGES = COLORS['Moving Bridges'] + '|' + END_COLOR
