@@ -153,10 +153,10 @@ class MovableObjects(Obj, ABC):
                 for j in range(temp2, temp3+1):
                     if horizontal and vertical:
                         pass
-                    if not config.DIMENSIONAL_ARRAY[i-1][j-1] == ' ':
+                    if not self.map_array[i-1][j-1] == ' ':
                         flag = False
-                        clashed_with = config.DIMENSIONAL_ARRAY[i-1][j-1]
-                        object_clashed = config.OBJECT_ARRAY[i-1][j-1]
+                        clashed_with = self.map_array[i-1][j-1]
+                        object_clashed = self.object_array[i-1][j-1]
 
             mrn = True
             if not flag:
