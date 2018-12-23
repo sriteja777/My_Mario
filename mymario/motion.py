@@ -61,7 +61,8 @@ class Player(MovableObjects):
         :param down: boolean whether to move down after moving up
         :return:
         """
-        config.CONTROL_MUSIC[0].play_music_for_action('Player jumped')
+        if config.SOUND:
+            config.CONTROL_MUSIC[0].play_music_for_action('Player jumped')
         self.move(unit=dist, sign_y=-1, vertical=True)
         if down:
             self.move(unit=100, sign_y=1, vertical=True)
@@ -72,7 +73,8 @@ class Player(MovableObjects):
         Moves PLAYER_OBJ simultaneously up and right by 8 units each side
         :return:
         """
-        config.CONTROL_MUSIC[0].play_music_for_action('Player jumped')
+        if config.SOUND:
+            config.CONTROL_MUSIC[0].play_music_for_action('Player jumped')
         self.move(8, sign_x=1, sign_y=-1, horizontal=True, vertical=True)
         self.move(100, sign_x=1, sign_y=1, horizontal=True, vertical=True)
         self.move_down()
@@ -82,7 +84,8 @@ class Player(MovableObjects):
         Moves PLAYER_OBJ simultaneously up and left by 8 units each side
         :return:
         """
-        config.CONTROL_MUSIC[0].play_music_for_action('Player jumped')
+        if config.SOUND:
+            config.CONTROL_MUSIC[0].play_music_for_action('Player jumped')
         self.move(8, -1, -1, horizontal=True, vertical=True)
         self.move(100, -1, 1, horizontal=True, vertical=True)
         self.move_down()
@@ -98,10 +101,12 @@ class Player(MovableObjects):
         #     print('sdfsdf')
         if self._lives == 1:
             config.pause.set()
-            config.CONTROL_MUSIC[0].play_music_for_action('Game over', no_thread=True, change=True)
+            if config.SOUND:
+                config.CONTROL_MUSIC[0].play_music_for_action('Game over', no_thread=True, change=True)
             config.stop.set()
             return
-        config.CONTROL_MUSIC[0].play_music_for_action('Player lost LIFE',
+        if config.SOUND:
+            config.CONTROL_MUSIC[0].play_music_for_action('Player lost LIFE',
                                                       no_thread=True, change=True)
         _new = 'Player at start'
         if self.min_x < config.HOLES_LIST[2].max_x:
@@ -110,7 +115,8 @@ class Player(MovableObjects):
             _new = 'Player at lake'
         elif self.min_x < config.MAP_LENGTH:
             _new = 'Player at thrones'
-        config.CONTROL_MUSIC[0].play_music_for_action(_new, change=True)
+        if config.SOUND:
+            config.CONTROL_MUSIC[0].play_music_for_action(_new, change=True)
         self.update_live(-1)
         for check in config.CHECKPOINTS[-1::-1]:
             if self.max_x >= check[0]:
@@ -148,7 +154,8 @@ class Player(MovableObjects):
         :return:
         """
         if clashed_with == config.COIN:
-            config.CONTROL_MUSIC[0].play_music_for_action('Player got coin')
+            if config.SOUND:
+                config.CONTROL_MUSIC[0].play_music_for_action('Player got coin')
             # config.pause.set()
             self.score += 1
             return True
@@ -156,7 +163,8 @@ class Player(MovableObjects):
         if clashed_with in (config.BRIDGE, config.UP_WALL, config.DOWN_WALL):
             return False
         if clashed_with == config.FLAG_POST:
-            config.CONTROL_MUSIC[0].play_music_for_action('Game completed',
+            if config.SOUND:
+                config.CONTROL_MUSIC[0].play_music_for_action('Game completed',
                                                           no_thread=True, change=True)
             config.stop.set()
 
@@ -165,7 +173,8 @@ class Player(MovableObjects):
 
         if clashed_with == config.ENEMY:
             if self.max_y < object_clashed.min_y:
-                config.CONTROL_MUSIC[0].play_music_for_action('Player jumped on enemy')
+                if config.SOUND:
+                    config.CONTROL_MUSIC[0].play_music_for_action('Player jumped on enemy')
                 self.score += 2
                 object_clashed.kill()
                 return True
@@ -174,7 +183,8 @@ class Player(MovableObjects):
 
         if clashed_with == config.EXTRAS_BRIDGE:
             if self.min_y > object_clashed.max_y:
-                config.CONTROL_MUSIC[0].play_music_for_action('Player got power up')
+                if config.SOUND:
+                    config.CONTROL_MUSIC[0].play_music_for_action('Player got power up')
                 if object_clashed.bonus == config.LOVE:
                     self.update_live(1)
                 elif object_clashed.bonus == config.STONE:
@@ -185,11 +195,13 @@ class Player(MovableObjects):
                 return False
 
         if clashed_with == config.LOVE:
-            config.CONTROL_MUSIC[0].play_music_for_action('Player got LIFE')
+            if config.SOUND:
+                config.CONTROL_MUSIC[0].play_music_for_action('Player got LIFE')
             self.update_live(1)
             return True
         if clashed_with == config.TIME:
-            config.CONTROL_MUSIC[0].play_music_for_action('Player got time')
+            if config.SOUND:
+                config.CONTROL_MUSIC[0].play_music_for_action('Player got time')
             self.time += 10
             return True
         if clashed_with == config.WATER:
@@ -214,7 +226,8 @@ class Stones(MovableObjects):
         :param min_y: Minimum y-coordinate of the Stone
         :param string: String of the stone
         """
-        config.CONTROL_MUSIC[0].play_music_for_action('Player launched stones')
+        if config.SOUND:
+            config.CONTROL_MUSIC[0].play_music_for_action('Player launched stones')
         MovableObjects.__init__(self, max_x, max_y, min_x, min_y, string, map_array, object_array)
 
     def move_stone(self):
@@ -266,7 +279,8 @@ class Stones(MovableObjects):
             self.kill()
             return False
         if clashed_with == config.ENEMY:
-            config.CONTROL_MUSIC[0].play_music_for_action('Stone hit enemy')
+            if config.SOUND:
+                config.CONTROL_MUSIC[0].play_music_for_action('Stone hit enemy')
             object_clashed.kill()
             self.kill()
             config.PLAYER_OBJ[0].score += 2
