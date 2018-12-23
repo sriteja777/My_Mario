@@ -93,7 +93,7 @@ timeout = Event()
 player_killed = Event()
 CHECKPOINTS = []  # Done
 CONTROL_MUSIC = []
-
+SOUND = False
 
 def getch_unix():
     """
