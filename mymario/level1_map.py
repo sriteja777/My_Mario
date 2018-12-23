@@ -62,6 +62,18 @@ class Level1Map(Map):
         self.create_enemies()
         self.create_extras()
         self.initial_player_position = {'max_x': 4, 'max_y': self.up_wall.min_y - 1, 'min_x': 3, 'min_y': self.up_wall.min_y - 2}
+        self.create_checkpoints()
+
+    def create_checkpoints(self):
+        """
+        Dependencies: initial player position, walls, holes, lakes
+        :return:
+        """
+        self.checkpoints.append((self.initial_player_position['min_x'], self.initial_player_position['max_y']))
+        self.checkpoints.append((self.columns, self.up_wall.min_y - 1))
+        self.checkpoints.append((self.holes[1].max_x + 4, self.up_wall.min_y - 1))
+        self.checkpoints.append((self.holes[2].max_x + 4, self.up_wall.min_y - 1))
+        self.checkpoints.append((self.lake.max_x + 1, self.up_wall.min_y - 1))
 
     def create_enemies(self):
         """
