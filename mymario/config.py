@@ -95,6 +95,7 @@ CHECKPOINTS = []  # Done
 CONTROL_MUSIC = []
 SOUND = False
 
+
 def getch_unix():
     """
     Get the singe character typed on terminal on Unix-based systems
