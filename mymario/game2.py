@@ -3,8 +3,11 @@ from random import randrange
 from threading import Thread
 from time import sleep
 
+import keyboard
+
 import level1_map
 import config
+from controls import Controls
 from motion import Player
 from objects import Obj
 
@@ -31,22 +34,51 @@ class Game:
             self.players.append(Player(self.maps[-1].initial_player_position, config.PLAYER, self.maps[-1].map_array))
             self.left_pointer.append(0)
             self.right_pointer.append(self.maps[-1].columns)
+        self.controls = Controls()
         # self.maps[0].view_map()
         self.print_screen()
-        inp_thread = Thread(target=self.get_input)
-        inp_thread.daemon = True
-        inp_thread.start()
+
+        for player_id in range(self.num_players):
+            inp_thread = Thread(target=self.get_input_for_player, args=(player_id,))
+            inp_thread.daemon = True
+            inp_thread.start()
+
         while True:
             try:
                 if config.stop.is_set() or config.timeout.is_set():
                     break
                 sleep(0.1)
-                self.make_updates(0)
-                self.make_updates(1)
+                [ self.make_updates(x) for x in range(self.num_players) ]
                 self.updates()
 
             except KeyboardInterrupt:
                 break
+
+    def get_input_for_player(self, player_id):
+        while True:
+            import sys
+            import tty
+            import termios
+            file_desc = sys.stdin.fileno()
+            old_settings = termios.tcgetattr(file_desc)
+            try:
+                tty.setraw(sys.stdin.fileno())
+                sleep(0.07)
+                self.move_player(player_id)
+            finally:
+                termios.tcsetattr(file_desc, termios.TCSADRAIN, old_settings)
+
+    def move_player(self, player_id):
+        if keyboard.is_pressed(self.controls.player[player_id].LEFT):
+            self.players[player_id].move_left()
+        if keyboard.is_pressed(self.controls.player[player_id].UP):
+            self.players[player_id].move_up()
+        if keyboard.is_pressed(self.controls.player[player_id].RIGHT):
+            self.players[player_id].move_right()
+        if keyboard.is_pressed(self.controls.player[player_id].UP_RIGHT):
+            self.players[player_id].move_up_right()
+        if keyboard.is_pressed(self.controls.player[player_id].UP_LEFT):
+            self.players[player_id].move_up_left()
 
     def multi_player_support(self, num_of_players):
         """
@@ -81,58 +113,6 @@ class Game:
     def get_terminal_dimensions():
         rows, columns = os.popen('stty size', 'r').read().split()
         return int(rows) - 3, int(columns)
-
-
-    def get_input(self):
-        """
-        Get input from the user and perform corresponding actions in the game
-        :return:
-        """
-        getch = config.getch_unix
-        while True:
-            k = getch()
-            if k == 'q':
-                config.stop.set()
-                break
-
-            # if k == ' ':
-            #     # pause the game
-            #     c.CONTROL_MUSIC[0].play_music_for_action('Game paused')
-            #     if c.pause.is_set():
-            #         c.pause.clear()
-            #     else:
-            #         c.pause.set()
-
-            if self.players[0].is_alive and not config.pause.is_set() and not config.timeout.is_set():
-                if k == 'a':
-                    self.players[0].move_left()
-                elif k == 'd':
-                    self.players[0].move_right()
-                elif k == 'w':
-                    self.players[0].move_up()
-
-                elif k == 'e':
-                    self.players[0].move_up_right()
-                elif k == 'z':
-                    self.players[0].move_up_left()
-                elif k == 'f':
-                    # launch_stones()
-                    pass
-                if k == 'j':
-                    self.players[1].move_left()
-                elif k == 'l':
-                    self.players[1].move_right()
-                elif k == 'i':
-                    self.players[1].move_up()
-
-                elif k == 'o':
-                    self.players[1].move_up_right()
-                elif k == 'm':
-                    self.players[1].move_up_left()
-            if config.timeout.is_set():
-                break
-            if config.stop.is_set():
-                break
 
     def make_updates(self, x):
         """
