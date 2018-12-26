@@ -11,15 +11,18 @@ class Map:
     """
     A Generalised class for all level maps
     """
-    def __init__(self, columns, rows, map_length):
+    def __init__(self, map_id, columns, rows, map_length):
         """
         Initialises the attributes of map
         """
+        self.id = id
         self.length = map_length
         self.rows = rows
         self.columns = columns
         self.map_array = [[' ' for _ in range(1, self.length + 1)] for _ in range(1, self.rows + 1)]
         self.object_array = [[0 for _ in range(1, self.length + 1)] for _ in range(1, self.rows + 1)]
+        self.left_pointer = 0
+        self.right_pointer = self.columns
         self.foreground = []
         self.background = []
         self.checkpoints = []
