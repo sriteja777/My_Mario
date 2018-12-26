@@ -12,7 +12,7 @@ class Player(MovableObjects):
     """
     A class for Player
     """
-    def __init__(self, boundary, string, map_array=config.DIMENSIONAL_ARRAY, object_array=config.OBJECT_ARRAY):
+    def __init__(self, boundary, string, player_id=-1, map_reference=None):
         """
         Initialises player in the Map
         :param boundary: A dict with initial position of the player having keys
@@ -20,12 +20,15 @@ class Player(MovableObjects):
         :param string:
         """
         MovableObjects.__init__(self, boundary['max_x'], boundary['max_y'],
-                                boundary['min_x'], boundary['min_y'], string, map_array, object_array)
+                                boundary['min_x'], boundary['min_y'], string, map_reference)
+        self.id = player_id
+        self.stones_reference = []
         self._lives = config.DEFAULT_LIVES
         self.stones = config.DEFAULT_NO_OF_STONES
         self.score = config.INITIAL_SCORE
         self.time = config.DEFAULT_TIMEOUT
         self.check_ends = True
+        self.change_pointers = True
 
     def move_down(self):
         """
@@ -109,25 +112,25 @@ class Player(MovableObjects):
             config.CONTROL_MUSIC[0].play_music_for_action('Player lost LIFE',
                                                       no_thread=True, change=True)
         _new = 'Player at start'
-        if self.min_x < config.HOLES_LIST[2].max_x:
+        if self.min_x < self.in_map.holes[2].max_x:
             _new = 'Player at start'
-        elif self.min_x < config.LAKES[0].max_x:
+        elif self.min_x < self.in_map.lake.max_x:
             _new = 'Player at lake'
-        elif self.min_x < config.MAP_LENGTH:
+        elif self.min_x < self.in_map.length:
             _new = 'Player at thrones'
         if config.SOUND:
             config.CONTROL_MUSIC[0].play_music_for_action(_new, change=True)
         self.update_live(-1)
-        for check in config.CHECKPOINTS[-1::-1]:
+        for check in self.in_map.checkpoints[-1::-1]:
             if self.max_x >= check[0]:
                 self.min_x = check[0]
                 self.max_x = check[0] + 1
                 self.min_y = check[1] - 1
                 self.max_y = check[1]
                 break
-        if config.left_pointer[0] >= self.min_x - 2:
-            config.left_pointer[0] = self.min_x - 2
-            config.right_pointer[0] = config.left_pointer[0] + config.COLUMNS
+        if self.in_map.left_pointer >= self.min_x - 2:
+            self.in_map.left_pointer = self.min_x - 2
+            self.in_map.right_pointer = self.in_map.left_pointer + self.in_map.columns
         self.is_alive = True
         self.update()
 
@@ -138,6 +141,9 @@ class Player(MovableObjects):
         :return:
         """
         self._lives += value
+
+    def update_score(self, score):
+        self.score += 2
 
     def get_lives(self):
         """
@@ -205,6 +211,7 @@ class Player(MovableObjects):
             self.time += 10
             return True
         if clashed_with == config.WATER:
+            # return False
             if not self.max_x == object_clashed.min_x or not self.min_x == object_clashed.max_x:
                 self.wrong_move()
                 return False
@@ -217,7 +224,7 @@ class Stones(MovableObjects):
     """
     Class of stones(i.e bullets)
     """
-    def __init__(self, max_x, max_y, min_x, min_y, string, map_array=config.DIMENSIONAL_ARRAY, object_array=config.OBJECT_ARRAY):
+    def __init__(self, max_x, max_y, min_x, min_y, string, map_reference, update_score):
         """
         Spawns the bullet at position specified by args
         :param max_x: Maximum x-coordinate of the Stone
@@ -228,24 +235,25 @@ class Stones(MovableObjects):
         """
         if config.SOUND:
             config.CONTROL_MUSIC[0].play_music_for_action('Player launched stones')
-        MovableObjects.__init__(self, max_x, max_y, min_x, min_y, string, map_array, object_array)
+        MovableObjects.__init__(self, max_x, max_y, min_x, min_y, string, map_reference)
+        self.update_score = update_score
 
     def move_stone(self):
         """
         Moves the stone based on its current position
         :return:
         """
-        if self.max_x >= config.right_pointer[0] or self.min_y > config.SUB_HOLES_LIST[0].max_y:
+        if self.max_x >= self.in_map.right_pointer or self.min_y > self.in_map.sub_holes[0].max_y:
             self.kill()
             return
-        if self.min_y >= config.SUB_HOLES_LIST[0].min_y and \
-                self.min_x == config.SUB_HOLES_LIST[0].max_x-1:
+        if self.min_y >= self.in_map.sub_holes[0].min_y and \
+                self.min_x == self.in_map.sub_holes[0].max_x-1:
             self.kill()
             return
-        if config.DIMENSIONAL_ARRAY[self.min_y][self.max_x-1] == config.WATER:
+        if self.map_array[self.min_y][self.max_x-1] == config.WATER:
             self.kill()
             return
-        if config.DIMENSIONAL_ARRAY[self.min_y][self.max_x-1] == ' ':
+        if self.map_array[self.min_y][self.max_x-1] == ' ':
             if self.is_alive:
                 self.move(1, 1, 1, horizontal=True, vertical=True)
 
@@ -283,7 +291,7 @@ class Stones(MovableObjects):
                 config.CONTROL_MUSIC[0].play_music_for_action('Stone hit enemy')
             object_clashed.kill()
             self.kill()
-            config.PLAYER_OBJ[0].score += 2
+            self.update_score(2)
             return False
         return False
 
@@ -292,7 +300,7 @@ class Enemies(MovableObjects):
     """
     Class for enemies in the game
     """
-    def __init__(self, max_x, max_y, min_x, min_y, string, range_x1, range_x2, map_array=config.DIMENSIONAL_ARRAY, object_array=config.OBJECT_ARRAY):
+    def __init__(self, max_x, max_y, min_x, min_y, string, range_x1, range_x2, map_reference=None):
         """
         Initialises the enemy in the map(DIMENSIONAL_ARRAY)
         :param max_x: Maximum x-coordinate of the object
@@ -303,7 +311,7 @@ class Enemies(MovableObjects):
         :param range_x1: Minimum x position where the enemy can go up to
         :param range_x2: Maximum x position where the enemy can go up to
         """
-        MovableObjects.__init__(self, max_x, max_y, min_x, min_y, string, map_array, object_array)
+        MovableObjects.__init__(self, max_x, max_y, min_x, min_y, string, map_reference)
         self.range_x1 = range_x1
         self.range_x2 = range_x2
 
@@ -365,7 +373,7 @@ class MovingBridges(MovableObjects):
     """
     Class for moving bridges(up and down)
     """
-    def __init__(self, max_x, max_y, min_x, min_y, string, range_min, range_max, map_array=config.DIMENSIONAL_ARRAY, object_array=config.OBJECT_ARRAY):
+    def __init__(self, max_x, max_y, min_x, min_y, string, range_min, range_max, map_reference):
         """
         Initialises the moving bridge in the map(DIMENSIONAL_ARRAY)
         :param max_x:
@@ -376,16 +384,16 @@ class MovingBridges(MovableObjects):
         :param range_min:
         :param range_max:
         """
-        MovableObjects.__init__(self, max_x, max_y, min_x, min_y, string, map_array, object_array)
+        MovableObjects.__init__(self, max_x, max_y, min_x, min_y, string, map_reference)
         self.range_min = range_min
         self.range_max = range_max
-        self.thread = Thread(target=self.move_bridge, args=(map_array, object_array))
+        self.thread = Thread(target=self.move_bridge)
         self.thread.daemon = True
         self.thread.start()
         self.going_up = False
         self.going_down = False
 
-    def move_bridge(self, map_array, object_array):
+    def move_bridge(self):
         """
         Moves the bridge up and down
         :return:
@@ -396,7 +404,7 @@ class MovingBridges(MovableObjects):
                 self.check(going_up=True)
                 self.move(1, sign_y=-1, vertical=True)
                 self.remove()
-                self.update(map_array, object_array)
+                self.update()
                 sleep(0.2)
             else:
                 self.remove()
@@ -413,7 +421,7 @@ class MovingBridges(MovableObjects):
                 self.remove()
                 self.going_down = False
                 break
-        self.move_bridge(map_array, object_array)
+        self.move_bridge()
 
     def check(self, going_up=False, down=False):
         """
@@ -434,9 +442,8 @@ class MovingBridges(MovableObjects):
             sign_y = 1
 
         for i in range(self.min_x, self.max_x+1):
-            if not config.DIMENSIONAL_ARRAY[temp][i-1] == ' ':
-                config.OBJECT_ARRAY[temp][i-1].move(unit=1, sign_x=0, sign_y=sign_y,
-                                                    horizontal=False, vertical=True)
+            if not self.map_array[temp][i-1] == ' ':
+                self.object_array[temp][i-1].move(unit=1, sign_x=0, sign_y=sign_y, horizontal=False, vertical=True)
 
     def wrong_move(self):
         """
