@@ -42,7 +42,7 @@ COLORS = {
 
 # Define all the required global variables
 END_COLOR = '\033[0m'
-TITLE = COLORS['Blue'] + 'SUPER MARIO' + END_COLOR
+TITLE = COLORS['Blue'] + 'MY MARIO' + END_COLOR
 SPACES_BEFORE_TITLE = int(COLUMNS / 2 - len(TITLE) / 2)
 INITIAL_SCORE = 0
 SCORE_TITLE = COLORS['Purple'] + "SCORE" + END_COLOR
