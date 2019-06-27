@@ -1,4 +1,5 @@
 import os
+import platform
 from random import randrange
 from threading import Thread, Timer
 from time import sleep
@@ -173,8 +174,12 @@ class Game:
 
     @staticmethod
     def get_terminal_dimensions():
-        rows, columns = os.popen('stty size', 'r').read().split()
-        return int(rows) - 3, int(columns)
+        if platform.system() != "Windows":
+            rows, columns = os.popen('stty size', 'r').read().split()
+            return int(rows) - 3, int(columns)
+        else:
+            rows, columns = 41, 168
+            return rows, columns
 
     def make_updates(self, x):
         """
@@ -260,4 +265,4 @@ class Game:
 #
 # while prompt_sudo() != 0:
 #     print("You enter incorrect password please try again")
-game = Game(2)
+game = Game(1)
