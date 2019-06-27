@@ -35,8 +35,8 @@ class Game:
                 Player(self.maps[-1].initial_player_position, config.PLAYER, num_id, self.maps[-1]))
         self.controls = Controls()
         # self.maps[0].view_map()
-        self.print_screen()
-
+        # self.print_screen()
+        # exit(1)
         for player_id in range(self.num_players):
             inp_thread = Thread(target=self.get_input_for_player, args=(player_id,))
             inp_thread.daemon = True
@@ -79,21 +79,33 @@ class Game:
             config.timeout.set()
 
     def get_input_for_player(self, player_id):
-        while True:
+        pass
+        if config.LINUX:
             import sys
             import tty
             import termios
-            file_desc = sys.stdin.fileno()
-            old_settings = termios.tcgetattr(file_desc)
-            try:
-                tty.setraw(sys.stdin.fileno())
-                sleep(0.03)
+            while True:
+                file_desc = sys.stdin.fileno()
+                old_settings = termios.tcgetattr(file_desc)
+                try:
+                    tty.setraw(sys.stdin.fileno())
+                    sleep(0.03)
+                    self.move_player(player_id)
+                finally:
+                    termios.tcsetattr(file_desc, termios.TCSADRAIN, old_settings)
+        elif config.WINDOWS:
+            while True:
                 self.move_player(player_id)
-            finally:
-                termios.tcsetattr(file_desc, termios.TCSADRAIN, old_settings)
+                sleep(0.03)
+
 
     def get_input_for_control(self):
-        getch = config.getch_unix
+        if config.LINUX:
+            getch = config.getch_unix
+        elif config.WINDOWS:
+            getch = config.getch_windows
+        else:
+            return
         while True:
             k = getch()
             if k == 'q':
@@ -205,7 +217,7 @@ class Game:
         inc += 1
 
     def updates(self):
-        os.system('tput reset')
+        os.system(config.CLEAR_COMMAND)
         combined_list = list([self.maps[x].map_array for x in range(self.num_players)])
         for i in zip(*combined_list):
             for j, item in enumerate(i):
@@ -238,17 +250,19 @@ class Game:
         Exit the game
         :return:
         """
-
-        os.system("tput cnorm")
-        os.system('killall -q aplay 2 >/dev/null')
-        os.system('reset')
+        if config.LINUX:
+            os.system("tput cnorm")
+            os.system("tput cnorm")
+            os.system('killall -q aplay 2 >/dev/null')
+            os.system('reset')
         last_string = "Thanks for playing My Mario game."
         'Your score: " + str(c.PLAYER_OBJ[0].score)'
         print(last_string.center(self.screen['columns']))
         print("Scores:")
         [print('Player', player_num + 1, ":", self.players[player_num].score) for player_num in
          range(self.num_players)]
-        os.system('killall -q aplay 2 >/dev/null')
+        if config.LINUX:
+            os.system('killall -q aplay 2 >/dev/null')
         exit(0)
 
 
