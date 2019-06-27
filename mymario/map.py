@@ -49,7 +49,7 @@ class Map:
         #     print('\r', end='')
 
         while True:
-            os.system('tput reset')
+            os.system(config.CLEAR_COMMAND)
             for i in self.map_array[:]:
                 for j in i[lp:rp]:
                     print(j, end='')
@@ -60,6 +60,6 @@ class Map:
 
             lp += flag
             rp += flag
-            sleep(0.05)
+            # sleep(0.001)
 
     # def remove_obj(self, ):
