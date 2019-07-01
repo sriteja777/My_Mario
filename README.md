@@ -23,14 +23,14 @@ You tell me :stuck_out_tongue_winking_eye:
 _You will really enjoy playing this run._ 
 
 A few pics of the run
-![start](./Media/start.png)
+![start](./mymario/Media/start.png)
 
-![middle](./Media/middle.png)
+![middle](./mymario/middle.png)
 
-![lake](./Media/lake.png)
+![lake](.mymario/Media/lake.png)
 
-![lakeend](./Media/lakeend.png)
+![lakeend](.mymario/Media/lakeend.png)
 
-![bridges](./Media/bridges.png)
+![bridges](.mymario/Media/bridges.png)
 
-![end](./Media/end.png)
+![end](.mymario/Media/end.png)
