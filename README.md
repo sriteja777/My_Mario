@@ -25,12 +25,12 @@ _You will really enjoy playing this run._
 A few pics of the run
 ![start](./mymario/Media/start.png)
 
-![middle](./mymario/middle.png)
+![middle](./mymario/Media/middle.png)
 
-![lake](.mymario/Media/lake.png)
+![lake](./mymario/Media/lake.png)
 
-![lakeend](.mymario/Media/lakeend.png)
+![lakeend](./mymario/Media/lakeend.png)
 
-![bridges](.mymario/Media/bridges.png)
+![bridges](./mymario/Media/bridges.png)
 
-![end](.mymario/Media/end.png)
+![end](./mymario/Media/end.png)
