@@ -151,9 +151,11 @@ def getch_unix():
         termios.tcsetattr(file_desc, termios.TCSADRAIN, old_settings)
     return char
 
+
 def getch_windows():
     import msvcrt
     return msvcrt.getch()
+
 
 def _music(action):
     """

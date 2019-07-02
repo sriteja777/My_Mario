@@ -98,7 +98,6 @@ class Game:
                 self.move_player(player_id)
                 sleep(0.03)
 
-
     def get_input_for_control(self):
         if config.LINUX:
             getch = config.getch_unix
@@ -279,4 +278,4 @@ class Game:
 #
 # while prompt_sudo() != 0:
 #     print("You enter incorrect password please try again")
-game = Game(1)
+game = Game(2)
