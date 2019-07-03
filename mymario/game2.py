@@ -86,6 +86,9 @@ class Game:
             self.maps[0].right_pointer += cosmic.pointer
             cosmic.pointer = 0
             self.first_screen()
+            cosmic.changes.clear()
+            cosmic.changes_lock.release()
+            return
         global hh
         for change in cosmic.changes:
             # f.write(str(change))

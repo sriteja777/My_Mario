@@ -140,6 +140,7 @@ class Player(MovableObjects):
         :param value: value to be incremented
         :return:
         """
+        return
         self._lives += value
 
     def update_score(self, score):
@@ -211,7 +212,7 @@ class Player(MovableObjects):
             self.time += 10
             return True
         if clashed_with == config.WATER:
-            # return False
+            return False
             if not self.max_x == object_clashed.min_x or not self.min_x == object_clashed.max_x:
                 self.wrong_move()
                 return False

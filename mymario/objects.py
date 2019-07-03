@@ -23,6 +23,7 @@ class Obj:
         """
         self.map_array = map_array
         self.object_array = object_array
+        self.my_map = map_ref
         self.max_x = max_x
         self.max_y = max_y
         self.min_x = min_x
@@ -41,8 +42,9 @@ class Obj:
                 if self.string:
                     self.map_array[i-1][j-1] = self.string
                     self.object_array[i-1][j-1] = self
-                    if second:
-                        cosmic.register_changes(i, j, self.string)
+                    if self.my_map is not None and second:
+                        if self.my_map.left_pointer < self.min_x and self.my_map.right_pointer > self.max_x:
+                            cosmic.register_changes(i, j - self.my_map.left_pointer, self.string)
 
     def update(self, map_array='', object_array=''):
         """
@@ -62,7 +64,9 @@ class Obj:
                 # config.OBJECT_ARRAY[i-1][j-1] = self
                 self.map_array[i-1][j-1] = ' '
                 self.object_array[i-1][j-1] = None
-                cosmic.register_changes(i, j, ' ')
+                if self.my_map is not None:
+                    if self.my_map.left_pointer < self.min_x and self.my_map.right_pointer > self.max_x:
+                        cosmic.register_changes(i, j - self.my_map.left_pointer, ' ')
 
 
 class MovableObjects(Obj, ABC):
@@ -78,7 +82,7 @@ class MovableObjects(Obj, ABC):
         :param min_y: Minimum y-coordinate of the object
         :param string: The boundary to be filled with
         """
-        Obj.__init__(self, max_x, max_y, min_x, min_y, string, map_reference.map_array, map_reference.object_array)
+        Obj.__init__(self, max_x, max_y, min_x, min_y, string, map_reference.map_array, map_reference.object_array, map_reference)
         self.is_alive = True
         self.change_pointers = False
         self.in_map = map_reference
