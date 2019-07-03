@@ -6,13 +6,13 @@ from abc import ABC, abstractmethod
 from time import sleep
 
 import config
-
+import cosmic
 
 class Obj:
     """
     A class for all regular objects
     """
-    def __init__(self, max_x, max_y, min_x, min_y, string, map_array=config.DIMENSIONAL_ARRAY, object_array=config.OBJECT_ARRAY):
+    def __init__(self, max_x, max_y, min_x, min_y, string, map_array=config.DIMENSIONAL_ARRAY, object_array=config.OBJECT_ARRAY, map_ref=None):
         """
         Initialises the Object in the map in the given boundary with the given string
         :param max_x: Maximum x-coordinate of the object
@@ -31,7 +31,7 @@ class Obj:
         self.update_dimensional_array()
         self.check_ends = False
 
-    def update_dimensional_array(self, map_array='', object_array=''):
+    def update_dimensional_array(self, map_array='', object_array='', second=False):
         """
         Updates the object in  the map(DIMENSIONAL_ARRAY)
         :return:
@@ -41,13 +41,15 @@ class Obj:
                 if self.string:
                     self.map_array[i-1][j-1] = self.string
                     self.object_array[i-1][j-1] = self
+                    if second:
+                        cosmic.register_changes(i, j, self.string)
 
     def update(self, map_array='', object_array=''):
         """
         Updates the object in  the map(DIMENSIONAL_ARRAY)
         :return:
         """
-        self.update_dimensional_array()
+        self.update_dimensional_array(second=True)
 
     def remove(self, map_array='', object_array=''):
         """
@@ -59,7 +61,8 @@ class Obj:
                 # config.DIMENSIONAL_ARRAY[i-1][j-1] = ' '
                 # config.OBJECT_ARRAY[i-1][j-1] = self
                 self.map_array[i-1][j-1] = ' '
-                self.object_array[i-1][j-1] = self
+                self.object_array[i-1][j-1] = None
+                cosmic.register_changes(i, j, ' ')
 
 
 class MovableObjects(Obj, ABC):
@@ -172,14 +175,20 @@ class MovableObjects(Obj, ABC):
                     mid = (self.in_map.left_pointer + self.in_map.right_pointer)/2
                     if self.change_pointers and horizontal and temp2 > self.min_x > mid:
                         if self.in_map.right_pointer < self.in_map.length:
-                            self.in_map.left_pointer += 1
-                            self.in_map.right_pointer += 1
+                            # self.in_map.left_pointer += 1
+                            # self.in_map.right_pointer += 1
+                            cosmic.pointer += 1
+
+                # cosmic.changes_lock.acquire()
+
                 self.min_x = temp2
                 self.max_x = temp3
                 self.min_y = temp4
                 self.max_y = temp5
-                if update:
-                    self.update()
+                # cosmic.changes_lock.acquire()
+
+                # if update:
+                #     self.update()
 
             else:
                 if self.is_alive:

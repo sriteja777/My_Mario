@@ -3,17 +3,22 @@ import platform
 from random import randrange
 from threading import Thread, Timer
 from time import sleep
+import sys
 
 import keyboard
 
 import config
 import level1_map
+import test_map
+import cosmic
+from Cursor import Cursor
 from controls import Controls
 from motion import Player, Stones
 from objects import Obj
 
 inc = 0
-
+cursor = Cursor()
+hh = 0
 
 class Game:
     def __init__(self, nop):
@@ -27,6 +32,9 @@ class Game:
         self.num_players = nop
         self.players = []
         self.maps = []
+        self.changes = {}
+        # sys.stdin.close()
+        # os.close(sys.stdin.fileno())
         print("the ratio is ", columns / nop)
         for num_id in range(nop):
             self.maps.append(level1_map.Level1Map(num_id, self.screen['rows'],
@@ -46,18 +54,79 @@ class Game:
             time_thread.start()
         control_input_thread = Thread(target=self.get_input_for_control)
         control_input_thread.daemon = True
+        if config.LINUX:
+            os.system('tput civis')
+            sleep(5)
         control_input_thread.start()
+        self.first_screen()
+        for i in range(1, 10):
+            cursor.put_char(i, 30, i)
         while True:
             try:
                 if config.stop.is_set() or config.timeout.is_set():
                     break
                 sleep(0.1)
                 [self.make_updates(x) for x in range(self.num_players)]
-                self.updates()
+                self.update_screen()
 
             except KeyboardInterrupt:
                 break
         self.exit()
+
+    def update_screen(self):
+        cosmic.changes_lock.acquire()
+        # f = open('temp', 'w')
+        # if cosmic.changes:
+        #     pass
+            # f.write(str(cosmic.changes))
+            # cosmic.print_changes()
+        # print(cosmic.changes)
+        if cosmic.pointer > 0:
+            self.maps[0].left_pointer += cosmic.pointer
+            self.maps[0].right_pointer += cosmic.pointer
+            cosmic.pointer = 0
+            self.first_screen()
+        global hh
+        for change in cosmic.changes:
+            # f.write(str(change))
+            # cursor.put_char(10, hh+4, str(change))
+            hh = hh + 1
+            cursor.put_char(change['x'], change['y'], change['string'])
+            # cosmic.changes.remove(change)
+            # sleep(0.1)
+        cosmic.changes.clear()
+
+        cosmic.changes_lock.release()
+        # f.close()
+
+    def first_screen(self):
+        os.system(config.CLEAR_COMMAND)
+        combined_list = list([self.maps[x].map_array for x in range(self.num_players)])
+        for i in zip(*combined_list):
+            for j, item in enumerate(i):
+                for k in item[self.maps[j].left_pointer:self.maps[j].right_pointer]:
+                    print(k, end='')
+                print(config.LINE, end='')
+            print()
+            print('\r', end='')
+
+        string_length = len('SCORE: ⌛: LEVEL I ⚽ *❤️* ')
+        for x in range(self.num_players):
+            total_length = string_length + len(
+                str(self.players[x].score) + str(self.players[x].time) + str(
+                    self.players[x].stones) + str(self.players[x].get_lives()))
+            gap = int((self.maps[x].columns - total_length) / 4)
+            print(config.SCORE_TITLE + ": " + str(self.players[x].score),
+                  config.TIME + ': ' + str(self.players[x].time), config.LEVEL_I_TITLE,
+                  config.STONE + ' * ' + str(self.players[x].stones),
+                  config.LOVE + ' *' + str(self.players[x].get_lives()), sep=' ' * gap,
+                  end=' ' * (self.maps[x].columns - total_length - 4 * gap + 2))
+
+        print('\n\r', end='')
+        # print(config.TITLE.center(self.screen['columns']+len(config.TITLE) - len('MY MARIO')))
+        # Either this or below statement can be used.
+        print('{: ^{num}}'.format(config.TITLE,
+                                  num=self.screen['columns'] + len(config.TITLE) - len('MY MARIO')))
 
     def decrease_time(self, player_id):
         """
@@ -89,10 +158,12 @@ class Game:
                 old_settings = termios.tcgetattr(file_desc)
                 try:
                     tty.setraw(sys.stdin.fileno())
-                    sleep(0.03)
                     self.move_player(player_id)
+                    sleep(0.03)
                 finally:
+                    pass
                     termios.tcsetattr(file_desc, termios.TCSADRAIN, old_settings)
+                    os.system('tput civis')
         elif config.WINDOWS:
             while True:
                 self.move_player(player_id)
@@ -133,10 +204,12 @@ class Game:
     def move_player(self, player_id):
         if keyboard.is_pressed(self.controls.player[player_id].LEFT):
             self.players[player_id].move_left()
+            # sleep(1)
         if keyboard.is_pressed(self.controls.player[player_id].UP):
             self.players[player_id].move_up()
         if keyboard.is_pressed(self.controls.player[player_id].RIGHT):
             self.players[player_id].move_right()
+            # sleep(1)
         if keyboard.is_pressed(self.controls.player[player_id].UP_RIGHT):
             self.players[player_id].move_up_right()
         if keyboard.is_pressed(self.controls.player[player_id].UP_LEFT):
@@ -215,7 +288,9 @@ class Game:
             self.maps[x].clouds[2].move_cloud()
         inc += 1
 
+
     def updates(self):
+        return
         os.system(config.CLEAR_COMMAND)
         combined_list = list([self.maps[x].map_array for x in range(self.num_players)])
         for i in zip(*combined_list):
@@ -261,6 +336,7 @@ class Game:
         [print('Player', player_num + 1, ":", self.players[player_num].score) for player_num in
          range(self.num_players)]
         if config.LINUX:
+            os.system('tput cnorm')
             os.system('killall -q aplay 2 >/dev/null')
         exit(0)
 
@@ -278,4 +354,4 @@ class Game:
 #
 # while prompt_sudo() != 0:
 #     print("You enter incorrect password please try again")
-game = Game(2)
+game = Game(1)
