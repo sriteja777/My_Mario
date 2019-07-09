@@ -13,7 +13,10 @@ import level1_map
 from controls import Controls
 from motion import Player, Stones
 from objects import Obj
+from music import Music
 
+
+msc = Music()
 inc = 0
 
 
@@ -31,7 +34,8 @@ class Game:
         self.maps = []
         self.gameplay_settings = self.configure_gameplay_settings()
         # os.system('tput civis')
-        print("the ratio is ", columns / nop)
+        # print("the ratio is ", columns / nop)
+        self.welcome_screen()
         for num_id in range(nop):
             self.maps.append(level1_map.Level1Map(num_id, self.screen['rows'],
                                                   int(self.screen['columns'] / nop - 1)))
@@ -53,9 +57,13 @@ class Game:
             control_input_thread.daemon = True
             control_input_thread.start()
         else:
+            time_thread = Thread(target=self.decrease_time, args=(0,))
+            time_thread.daemon = True
+            time_thread.start()
             all_input_thread = Thread(target=self.game_input)
             all_input_thread.daemon = True
             all_input_thread.start()
+        msc.play_music_for_action('Player at start')
         while True:
             try:
                 if config.stop.is_set() or config.timeout.is_set():
@@ -79,6 +87,20 @@ class Game:
                 gameplay_settings = config.DEFAULT_SETTINGS['ubuntu-1804']
         return gameplay_settings
 
+    def welcome_screen(self):
+        print('Hi!, Welcome to "My Mario" Game'.center(self.screen['columns']))
+        print('\rControls:')
+        print("\r'w' -> to move up")
+        print("\r'a' -> to move left")
+        print("\r'd -> to move right'")
+        print("\r'e' -> to move up_right")
+        print("\r'z' -> to move back_left")
+        print("\r'f' -> to throw stones")
+        print("\r'SPACE_BAR' -> at any instance of game to pause and to resume")
+        print("\r'q' -> at any instance of game to quit")
+        print('\rPress any key to continue.')
+        sys.stdin.read(1)
+
     def decrease_time(self, player_id):
         """
         Decreases Game Timer by 1 recursively itself after 1 sec
@@ -92,8 +114,7 @@ class Game:
             temp.daemon = True
             temp.start()
         else:
-            if config.SOUND:
-                config.CONTROL_MUSIC[0].play_music_for_action('Game over', change=True,
+            msc.play_music_for_action('Game over', change=True,
                                                               no_thread=True)
             config.pause.set()
             config.timeout.set()

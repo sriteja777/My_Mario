@@ -44,8 +44,8 @@ class Music:
         :param filename:
         :return:
         """
-        if SOUND:
-            return
+        # if SOUND:
+        #     return
         if main_thread().is_alive():
             os.system('aplay -q --process-id-file aplay_pid.txt '
                       + MUSIC_FILES_PATH + filename
@@ -59,6 +59,7 @@ class Music:
         :param change: boolean whether to change the correct music or not
         :return:
         """
+        # print("&"*1000)
         if not SOUND:
             return
         filename = self.action_music_filename[action]
