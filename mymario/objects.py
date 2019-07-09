@@ -66,7 +66,7 @@ class MovableObjects(Obj, ABC):
     """
     A class for movable regular objects
     """
-    def __init__(self, max_x, max_y, min_x, min_y, string, map_array, object_array):
+    def __init__(self, max_x, max_y, min_x, min_y, string, map_reference=None):
         """
         Initialises the Movable Object in the map in the given boundary with the given string
         :param max_x: Maximum x-coordinate of the object
@@ -75,8 +75,10 @@ class MovableObjects(Obj, ABC):
         :param min_y: Minimum y-coordinate of the object
         :param string: The boundary to be filled with
         """
-        Obj.__init__(self, max_x, max_y, min_x, min_y, string, map_array, object_array)
+        Obj.__init__(self, max_x, max_y, min_x, min_y, string, map_reference.map_array, map_reference.object_array)
         self.is_alive = True
+        self.change_pointers = False
+        self.in_map = map_reference
 
     @abstractmethod
     def clash(self, clashed_with, object_clashed):
@@ -133,13 +135,15 @@ class MovableObjects(Obj, ABC):
                 temp4 = self.min_y + sign_y
                 temp5 = self.max_y + sign_y
             if self.check_ends:
-                if temp5 >= config.ROWS:
-                    self.wrong_move()
-                    break
-                if temp3 > config.right_pointer[0] or temp2 <= config.left_pointer[0]:
-                    if update:
-                        self.update()
-                    break
+                if self.in_map is not None:
+                    if temp5 >= self.in_map.rows:
+                        self.wrong_move()
+                        break
+                if self.in_map is not None:
+                    if temp3 > self.in_map.right_pointer or temp2 <= self.in_map.left_pointer:
+                        if update:
+                            self.update()
+                        break
 
             if temp4 < config.TOP:
                 if update:
@@ -151,12 +155,10 @@ class MovableObjects(Obj, ABC):
 
             for i in range(temp4, temp5+1):
                 for j in range(temp2, temp3+1):
-                    if horizontal and vertical:
-                        pass
-                    if not config.DIMENSIONAL_ARRAY[i-1][j-1] == ' ':
+                    if not self.map_array[i-1][j-1] == ' ':
                         flag = False
-                        clashed_with = config.DIMENSIONAL_ARRAY[i-1][j-1]
-                        object_clashed = config.OBJECT_ARRAY[i-1][j-1]
+                        clashed_with = self.map_array[i-1][j-1]
+                        object_clashed = self.object_array[i-1][j-1]
 
             mrn = True
             if not flag:
@@ -166,12 +168,12 @@ class MovableObjects(Obj, ABC):
                 except AttributeError:
                     pass
             if mrn:
-                mid = (config.left_pointer[0] + config.right_pointer[0])/2
-                if config.PLAYER_OBJ:
-                    if self == config.PLAYER_OBJ[0] and horizontal and temp2 > self.min_x > mid:
-                        if config.right_pointer[0] < config.MAP_LENGTH:
-                            config.left_pointer[0] += 1
-                            config.right_pointer[0] += 1
+                if self.in_map is not None:
+                    mid = (self.in_map.left_pointer + self.in_map.right_pointer)/2
+                    if self.change_pointers and horizontal and temp2 > self.min_x > mid:
+                        if self.in_map.right_pointer < self.in_map.length:
+                            self.in_map.left_pointer += 1
+                            self.in_map.right_pointer += 1
                 self.min_x = temp2
                 self.max_x = temp3
                 self.min_y = temp4

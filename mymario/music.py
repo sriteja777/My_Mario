@@ -4,7 +4,7 @@ Module for playing different musics through the game
 import os
 from threading import main_thread, Thread
 
-from config import MUSIC_FILES_PATH
+from config import MUSIC_FILES_PATH, SOUND
 
 
 class Music:
@@ -44,6 +44,8 @@ class Music:
         :param filename:
         :return:
         """
+        # if SOUND:
+        #     return
         if main_thread().is_alive():
             os.system('aplay -q --process-id-file aplay_pid.txt '
                       + MUSIC_FILES_PATH + filename
@@ -57,6 +59,9 @@ class Music:
         :param change: boolean whether to change the correct music or not
         :return:
         """
+        # print("&"*1000)
+        if not SOUND:
+            return
         filename = self.action_music_filename[action]
         if change:
             os.system('killall -q aplay 2> /dev/null')

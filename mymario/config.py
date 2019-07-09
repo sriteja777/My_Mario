@@ -3,13 +3,40 @@ Config file for the game
 """
 
 import os
+import platform
+import sys
 from threading import Event, main_thread
-print(os.popen('stty size', 'r').read().split())
-ROWS, COLUMNS = os.popen('stty size', 'r').read().split()
-ROWS, COLUMNS = int(ROWS) - 3, int(COLUMNS)
+# print(os.popen('stty size', 'r').read().split())
+
+LINUX = False
+WINDOWS = False
+UBUNTU1604 = False
+UBUNTU1804 = True
+if platform.system() == "Windows":
+    ROWS, COLUMNS = 41, 168
+    CLEAR_COMMAND = "cls"
+    WINDOWS = True
+else:
+    ROWS, COLUMNS = os.popen('stty size', 'r').read().split()
+    ROWS, COLUMNS = int(ROWS) - 3, int(COLUMNS)
+    CLEAR_COMMAND = "clear"
+    LINUX = True
 MAP_LENGTH = 5 * COLUMNS
 DIMENSIONAL_ARRAY = [[' ' for x in range(1, MAP_LENGTH + 1)] for y in range(1, ROWS + 1)]
 OBJECT_ARRAY = [[0 for _ in range(1, MAP_LENGTH + 1)] for _ in range(1, ROWS + 1)]
+
+USE_EMOJI = True
+
+DEFAULT_SETTINGS = {
+    'ubuntu-1804' : {'use_emoji': False, 'force_emoji': True},
+    'windows-10' : {'use_emoji': False, 'force_emoji': False},
+    'ubuntu-1604' : {'use_emoji': True, 'force_emoji': False}
+}
+# try:
+#     '⌛💰⚽❤🐠'.encode(sys.stdout.encoding)
+#     USE_EMOJI = True
+# except:
+#     pass
 # MAP_ARRAY = [[' ' for _ in range(1, 3*COLUMNS+1)] for _ in range(1, ROWS+1)]
 
 
@@ -33,39 +60,60 @@ COLORS = {
     'Yellow': '\x1b[1;33m',
     'Light Grey': '\x1b[1;37m',
     'Bridge Color': '\x1b[48;5;130m',
+    'Down wall color': '\x1b[48;5;52m',
+    'Up wall color': '\x1b[48;5;46m',
     'Bullets Color': '\x1b[38;5;208m',
-    'Extras Bridge': '\x1b[38;5;82m',
+    'Extras Bridge': '\x1b[48;5;28m',
     'Water Color': '\x1b[48;5;39m',
     'Fish Color': '\x1b[38;5;130m',
     'Moving Bridges': '\x1b[48;5;94m'
 }
 
+
+
 # Define all the required global variables
 END_COLOR = '\033[0m'
-TITLE = COLORS['Blue'] + 'SUPER MARIO' + END_COLOR
+TITLE = COLORS['Blue'] + 'MY MARIO' + END_COLOR
 SPACES_BEFORE_TITLE = int(COLUMNS / 2 - len(TITLE) / 2)
 INITIAL_SCORE = 0
 SCORE_TITLE = COLORS['Purple'] + "SCORE" + END_COLOR
-TIME = COLORS['Green'] + "⌛" + END_COLOR
 LEVEL_I_TITLE = COLORS['Pink'] + 'LEVEL I' + END_COLOR
-COIN = COLORS['Yellow'] + '💰' + END_COLOR
+
+if USE_EMOJI:
+    TIME = COLORS['Green'] + "⌛" + END_COLOR
+    COIN = COLORS['Yellow'] + '💰' + END_COLOR
+
+    STONE = COLORS['Bullets Color'] + '⚽' + END_COLOR
+
+    LOVE = COLORS['Red'] + '❤️' + END_COLOR
+
+    FISH = COLORS['Fish Color'] + COLORS['Water Color'] + '🐠' + END_COLOR
+else:
+    TIME = COLORS['Green'] + "t" + END_COLOR
+    COIN = COLORS['Yellow'] + 'c' + END_COLOR
+
+    STONE = COLORS['Bullets Color'] + 's' + END_COLOR
+
+    LOVE = COLORS['Red'] + 'l' + END_COLOR
+
+    FISH = COLORS['Fish Color'] + COLORS['Water Color'] + 'f' + END_COLOR
+
+hard_emojis = [TIME, COIN, STONE, LOVE, FISH]
+
+EXTRAS_BRIDGE = COLORS['Extras Bridge'] + ' ' + END_COLOR
+UP_WALL = COLORS['Up wall color'] + ' ' + END_COLOR
+WATER = COLORS['Water Color'] + ' ' + END_COLOR
+DOWN_WALL = COLORS['Down wall color'] + ' ' + END_COLOR
 ENEMY = COLORS['Red'] + '^' + END_COLOR
 BRIDGE = COLORS['Bridge Color'] + '_' + END_COLOR
-DOWN_WALL = COLORS['Brown'] + '░' + END_COLOR
-UP_WALL = COLORS['Light Green'] + '▓' + END_COLOR
 FLAG_POST = '|'
 LINE = '│'
-STONE = COLORS['Bullets Color'] + '⚽' + END_COLOR
-WATER = COLORS['Water Color'] + '░' + END_COLOR
 MOVING_BRIDGES = COLORS['Moving Bridges'] + '|' + END_COLOR
 # PLAYER = '\033[1;34;' + '@'
 PLAYER = COLORS['Cyan'] + '@' + END_COLOR
 DEFAULT_LIVES = 5
 DEFAULT_NO_OF_STONES = 3
 DEFAULT_TIMEOUT = 200
-LOVE = COLORS['Red'] + '❤️' + END_COLOR
-EXTRAS_BRIDGE = COLORS['Extras Bridge'] + '░' + END_COLOR
-FISH = COLORS['Fish Color'] + COLORS['Water Color'] + '🐠' + END_COLOR
 THRONES = '┴'
 MUSIC_FILES_PATH = './Media/'
 TOP = int(4 + ROWS / 20)
@@ -93,6 +141,7 @@ timeout = Event()
 player_killed = Event()
 CHECKPOINTS = []  # Done
 CONTROL_MUSIC = []
+SOUND = True
 
 
 def getch_unix():
@@ -100,17 +149,15 @@ def getch_unix():
     Get the singe character typed on terminal on Unix-based systems
     :return: Single character typed during game
     """
-    import sys
-    import tty
-    import termios
-    file_desc = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(file_desc)
-    try:
-        tty.setraw(sys.stdin.fileno())
-        char = sys.stdin.read(1)
-    finally:
-        termios.tcsetattr(file_desc, termios.TCSADRAIN, old_settings)
+
+    char = sys.stdin.read(1)
+
     return char
+
+
+def getch_windows():
+    import msvcrt
+    return msvcrt.getch()
 
 
 def _music(action):

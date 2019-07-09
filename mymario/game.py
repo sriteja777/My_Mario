@@ -369,7 +369,7 @@ def run():
     # Initiate the screen
     Obj(c.COLUMNS, c.ROWS, 1, 3, ' ')
     up_wall, _ = create_level1_map()
-    # exit(0)
+
     c.PLAYER_OBJ.append(
         Player({'max_x': 4, 'max_y': up_wall.min_y - 1, 'min_x': 3, 'min_y': up_wall.min_y - 2},
                c.PLAYER)
