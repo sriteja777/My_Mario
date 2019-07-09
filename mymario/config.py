@@ -19,7 +19,7 @@ if platform.system() == "Windows":
 else:
     ROWS, COLUMNS = os.popen('stty size', 'r').read().split()
     ROWS, COLUMNS = int(ROWS) - 3, int(COLUMNS)
-    CLEAR_COMMAND = "tput reset"
+    CLEAR_COMMAND = "clear"
     LINUX = True
 MAP_LENGTH = 5 * COLUMNS
 DIMENSIONAL_ARRAY = [[' ' for x in range(1, MAP_LENGTH + 1)] for y in range(1, ROWS + 1)]
@@ -30,7 +30,7 @@ USE_EMOJI = True
 DEFAULT_SETTINGS = {
     'ubuntu-1804' : {'use_emoji': False, 'force_emoji': True},
     'windows-10' : {'use_emoji': False, 'force_emoji': False},
-    'ubuntu-1604' : {'use_emoji': True, 'force_emoji': True}
+    'ubuntu-1604' : {'use_emoji': True, 'force_emoji': False}
 }
 # try:
 #     '⌛💰⚽❤🐠'.encode(sys.stdout.encoding)
@@ -149,16 +149,9 @@ def getch_unix():
     Get the singe character typed on terminal on Unix-based systems
     :return: Single character typed during game
     """
-    import sys
-    import tty
-    import termios
-    file_desc = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(file_desc)
-    try:
-        tty.setraw(sys.stdin.fileno())
-        char = sys.stdin.read(1)
-    finally:
-        termios.tcsetattr(file_desc, termios.TCSADRAIN, old_settings)
+
+    char = sys.stdin.read(1)
+
     return char
 
 

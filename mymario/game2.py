@@ -30,7 +30,7 @@ class Game:
         self.players = []
         self.maps = []
         self.gameplay_settings = self.configure_gameplay_settings()
-        os.system('tput civis')
+        # os.system('tput civis')
         print("the ratio is ", columns / nop)
         for num_id in range(nop):
             self.maps.append(level1_map.Level1Map(num_id, self.screen['rows'],
@@ -94,25 +94,9 @@ class Game:
             config.timeout.set()
 
     def get_input_for_player(self, player_id):
-        pass
-        if config.LINUX:
-            import sys
-            import tty
-            import termios
-            while True:
-                file_desc = sys.stdin.fileno()
-                old_settings = termios.tcgetattr(file_desc)
-                try:
-                    tty.setraw(sys.stdin.fileno())
-                    sleep(0.03)
-                    self.move_player(player_id)
-                finally:
-                    termios.tcsetattr(file_desc, termios.TCSADRAIN, old_settings)
-                    os.system('tput civis')
-        elif config.WINDOWS:
-            while True:
-                self.move_player(player_id)
-                sleep(0.03)
+        while True:
+            self.move_player(player_id)
+            sleep(0.03)
 
     def get_input_for_control(self):
         if config.LINUX:
@@ -263,6 +247,8 @@ class Game:
             total_length = string_length + len(
                 str(self.players[x].score) + str(self.players[x].time) + str(
                     self.players[x].stones) + str(self.players[x].get_lives()))
+            if config.UBUNTU1804:
+                total_length += 2
             gap = int((self.maps[x].columns - total_length) / 4)
             print(config.SCORE_TITLE + ": " + str(self.players[x].score),
                   config.TIME + ': ' + str(self.players[x].time), config.LEVEL_I_TITLE,
@@ -273,8 +259,8 @@ class Game:
         print('\n\r', end='')
         # print(config.TITLE.center(self.screen['columns']+len(config.TITLE) - len('MY MARIO')))
         # Either this or below statement can be used.
-        # print('{: ^{num}}'.format(config.TITLE,
-        #                           num=self.screen['columns'] + len(config.TITLE) - len('MY MARIO')))
+        print('{: ^{num}}'.format(config.TITLE,
+                                  num=self.screen['columns'] + len(config.TITLE) - len('MY MARIO')))
 
     def exit(self):
         """
@@ -285,7 +271,8 @@ class Game:
             os.system("tput cnorm")
             os.system("tput cnorm")
             os.system('killall -q aplay 2 >/dev/null')
-            os.system('reset')
+            os.system('tput reset')
+            # os.system('reset')
         last_string = "Thanks for playing My Mario game."
         'Your score: " + str(c.PLAYER_OBJ[0].score)'
         print(last_string.center(self.screen['columns']))
@@ -324,8 +311,10 @@ if __name__ == "__main__":
     settings_term = None
     stdin_fd = sys.stdin.fileno()
     if config.LINUX:
-        import termios
+        import termios, tty
         settings_term = termios.tcgetattr(stdin_fd)
+        tty.setraw(stdin_fd)
+        os.system('tput civis')
     atexit.register(exit_handler, stdin_fd=stdin_fd, terminal_settings=settings_term)
     # print("LINUX: ", LINUX)
-    game = Game(1)
+    game = Game(3)
