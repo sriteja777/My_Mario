@@ -10,6 +10,8 @@ from threading import Event, main_thread
 
 LINUX = False
 WINDOWS = False
+UBUNTU1604 = False
+UBUNTU1804 = True
 if platform.system() == "Windows":
     ROWS, COLUMNS = 41, 168
     CLEAR_COMMAND = "cls"
@@ -23,7 +25,13 @@ MAP_LENGTH = 5 * COLUMNS
 DIMENSIONAL_ARRAY = [[' ' for x in range(1, MAP_LENGTH + 1)] for y in range(1, ROWS + 1)]
 OBJECT_ARRAY = [[0 for _ in range(1, MAP_LENGTH + 1)] for _ in range(1, ROWS + 1)]
 
-USE_EMOJI = False
+USE_EMOJI = True
+
+DEFAULT_SETTINGS = {
+    'ubuntu-1804' : {'use_emoji': False, 'force_emoji': True},
+    'windows-10' : {'use_emoji': False, 'force_emoji': False},
+    'ubuntu-1604' : {'use_emoji': True, 'force_emoji': True}
+}
 # try:
 #     '⌛💰⚽❤🐠'.encode(sys.stdout.encoding)
 #     USE_EMOJI = True
@@ -89,6 +97,8 @@ else:
     LOVE = COLORS['Red'] + 'l' + END_COLOR
 
     FISH = COLORS['Fish Color'] + COLORS['Water Color'] + 'f' + END_COLOR
+
+hard_emojis = [TIME, COIN, STONE, LOVE, FISH]
 
 EXTRAS_BRIDGE = COLORS['Extras Bridge'] + ' ' + END_COLOR
 UP_WALL = COLORS['Up wall color'] + ' ' + END_COLOR

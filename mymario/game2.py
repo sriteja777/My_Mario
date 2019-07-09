@@ -29,6 +29,7 @@ class Game:
         self.num_players = nop
         self.players = []
         self.maps = []
+        self.gameplay_settings = self.configure_gameplay_settings()
         os.system('tput civis')
         print("the ratio is ", columns / nop)
         for num_id in range(nop):
@@ -61,6 +62,17 @@ class Game:
             except KeyboardInterrupt:
                 break
         self.exit()
+
+    def configure_gameplay_settings(self):
+        gameplay_settings = {}
+        if config.WINDOWS:
+            gameplay_settings = config.DEFAULT_SETTINGS['windows-10']
+        if config.LINUX:
+            if config.UBUNTU1604:
+                gameplay_settings = config.DEFAULT_SETTINGS['ubuntu-1604']
+            elif config.UBUNTU1804:
+                gameplay_settings = config.DEFAULT_SETTINGS['ubuntu-1804']
+        return gameplay_settings
 
     def decrease_time(self, player_id):
         """
@@ -222,13 +234,29 @@ class Game:
     def updates(self):
         os.system(config.CLEAR_COMMAND)
         combined_list = list([self.maps[x].map_array for x in range(self.num_players)])
-        for i in zip(*combined_list):
-            for j, item in enumerate(i):
-                for k in item[self.maps[j].left_pointer:self.maps[j].right_pointer]:
-                    print(k, end='')
-                print(config.LINE, end='')
-            print()
-            print('\r', end='')
+        skip = False
+        if self.gameplay_settings['force_emoji']:
+            for i in zip(*combined_list):
+                for j, item in enumerate(i):
+                    for k in item[self.maps[j].left_pointer:self.maps[j].right_pointer]:
+                        if skip:
+                            # print(config.COLORS['Red'] + 'T' + config.END_COLOR, end='')
+                            skip = False
+                        else: print(k, end='')
+                        if k in config.hard_emojis:
+                            # skip = True
+                            pass
+                            if not k == item[self.maps[j].right_pointer-1]:
+                                skip = True
+                    print(config.LINE, end='')
+                print('\r')
+        else:
+            for i in zip(*combined_list):
+                for j, item in enumerate(i):
+                    for k in item[self.maps[j].left_pointer:self.maps[j].right_pointer]:
+                       print(k,end='')
+                    print(config.LINE, end='')
+                print('\r')
 
         string_length = len('SCORE: ⌛: LEVEL I ⚽ *❤️* ')
         for x in range(self.num_players):
@@ -245,8 +273,8 @@ class Game:
         print('\n\r', end='')
         # print(config.TITLE.center(self.screen['columns']+len(config.TITLE) - len('MY MARIO')))
         # Either this or below statement can be used.
-        print('{: ^{num}}'.format(config.TITLE,
-                                  num=self.screen['columns'] + len(config.TITLE) - len('MY MARIO')))
+        # print('{: ^{num}}'.format(config.TITLE,
+        #                           num=self.screen['columns'] + len(config.TITLE) - len('MY MARIO')))
 
     def exit(self):
         """
