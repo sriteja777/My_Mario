@@ -271,17 +271,19 @@ class Game:
             os.system("tput cnorm")
             os.system("tput cnorm")
             os.system('killall -q aplay 2 >/dev/null')
-            os.system('tput reset')
+            print("\033[?1049l")
+            # os.system('clear')
+            # os.system('tput reset')
             # os.system('reset')
         last_string = "Thanks for playing My Mario game."
         'Your score: " + str(c.PLAYER_OBJ[0].score)'
         print(last_string.center(self.screen['columns']))
-        print("Scores:")
-        [print('Player', player_num + 1, ":", self.players[player_num].score) for player_num in
+        print("\rScores:")
+        [print('\r  Player', player_num + 1, ":", self.players[player_num].score) for player_num in
          range(self.num_players)]
+        print('\r',end='')
         if config.LINUX:
             os.system('killall -q aplay 2 >/dev/null')
-            os.system('tput cnorm')
         exit(0)
 
 
@@ -305,6 +307,7 @@ def exit_handler(stdin_fd, terminal_settings):
     if config.LINUX:
         import termios
         termios.tcsetattr(stdin_fd, termios.TCSADRAIN, terminal_settings)
+        # print("\033[?1049l")
 
 
 if __name__ == "__main__":
@@ -313,6 +316,7 @@ if __name__ == "__main__":
     if config.LINUX:
         import termios, tty
         settings_term = termios.tcgetattr(stdin_fd)
+        print("\033[?1049h\033[H")
         tty.setraw(stdin_fd)
         os.system('tput civis')
     atexit.register(exit_handler, stdin_fd=stdin_fd, terminal_settings=settings_term)
