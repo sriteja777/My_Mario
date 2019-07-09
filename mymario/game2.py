@@ -41,16 +41,21 @@ class Game:
         # self.maps[0].view_map()
         # self.print_screen()
         # exit(1)
-        for player_id in range(self.num_players):
-            inp_thread = Thread(target=self.get_input_for_player, args=(player_id,))
-            inp_thread.daemon = True
-            inp_thread.start()
-            time_thread = Thread(target=self.decrease_time, args=(player_id,))
-            time_thread.daemon = True
-            time_thread.start()
-        control_input_thread = Thread(target=self.get_input_for_control)
-        control_input_thread.daemon = True
-        control_input_thread.start()
+        if ROOT:
+            for player_id in range(self.num_players):
+                inp_thread = Thread(target=self.get_input_for_player, args=(player_id,))
+                inp_thread.daemon = True
+                inp_thread.start()
+                time_thread = Thread(target=self.decrease_time, args=(player_id,))
+                time_thread.daemon = True
+                time_thread.start()
+            control_input_thread = Thread(target=self.get_input_for_control)
+            control_input_thread.daemon = True
+            control_input_thread.start()
+        else:
+            all_input_thread = Thread(target=self.game_input)
+            all_input_thread.daemon = True
+            all_input_thread.start()
         while True:
             try:
                 if config.stop.is_set() or config.timeout.is_set():
@@ -97,6 +102,50 @@ class Game:
         while True:
             self.move_player(player_id)
             sleep(0.03)
+
+    def game_input(self):
+        if config.LINUX:
+            getch = config.getch_unix
+        elif config.WINDOWS:
+            getch = config.getch_windows
+        else:
+            return
+        while True:
+            k = getch()
+            if k == 'q':
+                config.stop.set()
+                break
+
+            if k == ' ':
+                # pause the game
+                if config.SOUND:
+                    config.CONTROL_MUSIC[0].play_music_for_action('Game paused')
+                if config.pause.is_set():
+                    config.pause.clear()
+                else:
+                    config.pause.set()
+
+            if not config.pause.is_set() and not config.timeout.is_set():
+                for player_id in range(self.num_players):
+                    if k == self.controls.player[player_id].BULLET:
+                        self.launch_stones(player_id)
+                        break
+            player_id = 0
+            if k == self.controls.player[player_id].UP_LEFT:
+                self.players[player_id].move_up_left()
+            if k == self.controls.player[player_id].UP_RIGHT:
+                self.players[player_id].move_up_right()
+            if k == self.controls.player[player_id].LEFT:
+                self.players[player_id].move_left()
+            if k == self.controls.player[player_id].RIGHT:
+                self.players[player_id].move_right()
+            if k == self.controls.player[player_id].UP:
+                self.players[player_id].move_up()
+            if config.timeout.is_set():
+                break
+            if config.stop.is_set():
+                break
+
 
     def get_input_for_control(self):
         if config.LINUX:
@@ -318,5 +367,12 @@ if __name__ == "__main__":
 
         os.system('tput civis')
     atexit.register(exit_handler, stdin_fd=stdin_fd, terminal_settings=settings_term)
+    ROOT = True
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "-n":
+            ROOT = False
     # print("LINUX: ", LINUX)
-    game = Game(3)
+    if ROOT:
+        game = Game(3)
+    else:
+        game = Game(1)
