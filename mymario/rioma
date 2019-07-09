@@ -7,9 +7,10 @@ from threading import Thread, Timer
 from time import sleep
 import atexit
 
+if os.path.isdir("/usr/share/rioma/"):
+    os.chdir("/usr/share/rioma/")
 import keyboard
 
-os.chdir("/usr/share/rioma/")
 
 import config
 import level1_map
