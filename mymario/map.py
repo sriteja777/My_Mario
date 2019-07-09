@@ -30,7 +30,7 @@ class Map:
         self.bridges = []
         self.holes = []
         self.coins = []
-        self.control_music = ''
+        # self.control_music = ''
 
     def view_map(self, reverse=False):
         flag = 1

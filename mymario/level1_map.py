@@ -8,7 +8,8 @@ from map import Map
 from motion import MovingBridges, Enemies
 from objects import Obj, Extras
 import config
-
+from music import Music
+msc = Music()
 
 def get_extra():
     """
@@ -63,6 +64,24 @@ class Level1Map(Map):
         self.create_extras()
         self.initial_player_position = {'max_x': 4, 'max_y': self.up_wall.min_y - 1, 'min_x': 3, 'min_y': self.up_wall.min_y - 2}
         self.create_checkpoints()
+        self.player_crossed_start = False
+        self.player_crossed_lake = False
+        self.player_crossed_thrones = False
+
+        # self.music_conf = [{}]
+
+    def control_music(self, player_loc):
+        if not self.player_crossed_start and \
+                    player_loc > self.holes[2].max_x:
+            self.player_crossed_start = True
+            msc.play_music_for_action('Player at lake', change=True)
+        if not self.player_crossed_lake and player_loc > self.lake.max_x:
+            self.player_crossed_lake = True
+            msc.play_music_for_action('Player at thrones', change=True)
+        if not self.player_crossed_thrones and \
+                player_loc > self.thrones[0].max_x:
+            self.player_crossed_thrones = True
+            msc.play_music_for_action('Player at end', change=True)
 
     def create_checkpoints(self):
         """

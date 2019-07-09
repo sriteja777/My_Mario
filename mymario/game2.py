@@ -139,8 +139,7 @@ class Game:
 
             if k == ' ':
                 # pause the game
-                if config.SOUND:
-                    config.CONTROL_MUSIC[0].play_music_for_action('Game paused')
+                msc.play_music_for_action('Game paused')
                 if config.pause.is_set():
                     config.pause.clear()
                 else:
@@ -152,16 +151,17 @@ class Game:
                         self.launch_stones(player_id)
                         break
             player_id = 0
-            if k == self.controls.player[player_id].UP_LEFT:
-                self.players[player_id].move_up_left()
-            if k == self.controls.player[player_id].UP_RIGHT:
-                self.players[player_id].move_up_right()
-            if k == self.controls.player[player_id].LEFT:
-                self.players[player_id].move_left()
-            if k == self.controls.player[player_id].RIGHT:
-                self.players[player_id].move_right()
-            if k == self.controls.player[player_id].UP:
-                self.players[player_id].move_up()
+            if self.players[player_id].is_alive and not config.pause.is_set() and not config.timeout.is_set():
+                if k == self.controls.player[player_id].UP_LEFT:
+                    self.players[player_id].move_up_left()
+                if k == self.controls.player[player_id].UP_RIGHT:
+                    self.players[player_id].move_up_right()
+                if k == self.controls.player[player_id].LEFT:
+                    self.players[player_id].move_left()
+                if k == self.controls.player[player_id].RIGHT:
+                    self.players[player_id].move_right()
+                if k == self.controls.player[player_id].UP:
+                    self.players[player_id].move_up()
             if config.timeout.is_set():
                 break
             if config.stop.is_set():
@@ -275,6 +275,9 @@ class Game:
             temp.start()
             if not stone.is_alive:
                 self.players[x].stones_reference.remove(stone)
+        if self.num_players == 1:
+           self.maps[0].control_music(self.players[0].min_x)
+
         rand_x = randrange(1, 100)
         rand_x_2 = randrange(1, 150)
         rand_x_3 = randrange(1, 75)
@@ -375,6 +378,7 @@ def exit_handler(stdin_fd, terminal_settings):
     if config.LINUX:
         import termios
         termios.tcsetattr(stdin_fd, termios.TCSADRAIN, terminal_settings)
+        os.system('killall -q aplay 2 >/dev/null')
         # print("\033[?1049l")
 
 
