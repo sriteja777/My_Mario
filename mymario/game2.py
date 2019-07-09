@@ -169,7 +169,8 @@ class Game:
             return False
 
     def initialise_screen(self):
-        Obj(self.screen['columns'], self.screen['rows'], 1, 3, ' ')
+        print("\033[?1049h\033[H")
+        # Obj(self.screen['columns'], self.screen['rows'], 1, 3, ' ')
 
     def print_screen(self):
         lp = 0
@@ -185,7 +186,7 @@ class Game:
 
     @staticmethod
     def get_terminal_dimensions():
-        if platform.system() != "Windows":
+        if config.LINUX:
             rows, columns = os.popen('stty size', 'r').read().split()
             return int(rows) - 3, int(columns)
         else:
@@ -224,12 +225,9 @@ class Game:
                 for j, item in enumerate(i):
                     for k in item[self.maps[j].left_pointer:self.maps[j].right_pointer]:
                         if skip:
-                            # print(config.COLORS['Red'] + 'T' + config.END_COLOR, end='')
                             skip = False
                         else: print(k, end='')
                         if k in config.hard_emojis:
-                            # skip = True
-                            pass
                             if not k == item[self.maps[j].right_pointer-1]:
                                 skip = True
                     print(config.LINE, end='')
@@ -316,8 +314,8 @@ if __name__ == "__main__":
     if config.LINUX:
         import termios, tty
         settings_term = termios.tcgetattr(stdin_fd)
-        print("\033[?1049h\033[H")
         tty.setraw(stdin_fd)
+
         os.system('tput civis')
     atexit.register(exit_handler, stdin_fd=stdin_fd, terminal_settings=settings_term)
     # print("LINUX: ", LINUX)
