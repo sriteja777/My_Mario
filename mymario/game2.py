@@ -1,8 +1,10 @@
 import os
 import platform
+import sys
 from random import randrange
 from threading import Thread, Timer
 from time import sleep
+import atexit
 
 import keyboard
 
@@ -27,6 +29,7 @@ class Game:
         self.num_players = nop
         self.players = []
         self.maps = []
+        os.system('tput civis')
         print("the ratio is ", columns / nop)
         for num_id in range(nop):
             self.maps.append(level1_map.Level1Map(num_id, self.screen['rows'],
@@ -93,6 +96,7 @@ class Game:
                     self.move_player(player_id)
                 finally:
                     termios.tcsetattr(file_desc, termios.TCSADRAIN, old_settings)
+                    os.system('tput civis')
         elif config.WINDOWS:
             while True:
                 self.move_player(player_id)
@@ -262,6 +266,7 @@ class Game:
          range(self.num_players)]
         if config.LINUX:
             os.system('killall -q aplay 2 >/dev/null')
+            os.system('tput cnorm')
         exit(0)
 
 
@@ -278,4 +283,21 @@ class Game:
 #
 # while prompt_sudo() != 0:
 #     print("You enter incorrect password please try again")
-game = Game(2)
+
+def exit_handler(stdin_fd, terminal_settings):
+    if config.WINDOWS:
+        return
+    if config.LINUX:
+        import termios
+        termios.tcsetattr(stdin_fd, termios.TCSADRAIN, terminal_settings)
+
+
+if __name__ == "__main__":
+    settings_term = None
+    stdin_fd = sys.stdin.fileno()
+    if config.LINUX:
+        import termios
+        settings_term = termios.tcgetattr(stdin_fd)
+    atexit.register(exit_handler, stdin_fd=stdin_fd, terminal_settings=settings_term)
+    # print("LINUX: ", LINUX)
+    game = Game(1)
