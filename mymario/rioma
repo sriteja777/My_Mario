@@ -9,6 +9,7 @@ import atexit
 
 if os.path.isdir("/usr/share/rioma/"):
     os.chdir("/usr/share/rioma/")
+    sys.path.append("/usr/share/rioma")
 import keyboard
 
 
