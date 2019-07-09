@@ -4,7 +4,7 @@ sys.path.append('/home/sriteja/PycharmProjects/My_Mario/mymario')
 # sys.path.insert(0, '../mymario/')
 import motion as m
 import config as c
-import game as g
+import old_game as g
 
 player = m.Player({'max_x': 4, 'max_y': 5, 'min_x':  6, 'min_y': 7}, c.PLAYER)
 

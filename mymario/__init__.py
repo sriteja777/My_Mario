@@ -13,4 +13,4 @@ Initialises the game
 # if __name__ == '__main__':
 #     game.run()
 
-__all__ = ["motion", "objects", "irregular", "game", "music", "config"]
+__all__ = ["motion", "objects", "irregular", "old_game.py", "music", "config"]
