@@ -196,7 +196,7 @@ class MovableObjects(Obj, ABC):
 
     def kill(self):
         """
-        Kills the object from the game. It cannot take re-birth
+        Kills the object from the rioma. It cannot take re-birth
         :return:
         """
         self.is_alive = False

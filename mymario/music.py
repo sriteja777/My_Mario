@@ -1,5 +1,5 @@
 """
-Module for playing different musics through the game
+Module for playing different musics through the rioma
 """
 import os
 from threading import main_thread, Thread
@@ -9,7 +9,7 @@ from config import MUSIC_FILES_PATH, SOUND
 
 class Music:
     """
-    Class used for playing music during the game
+    Class used for playing music during the rioma
     """
     def __init__(self):
         """
@@ -33,9 +33,6 @@ class Music:
             "Player launched stones": "stones",
             "Stone hit enemy": "stoneonenemy"
         }
-        self.player_crossed_start = False
-        self.player_crossed_lake = False
-        self.player_crossed_thrones = False
 
     @staticmethod
     def _play(filename):

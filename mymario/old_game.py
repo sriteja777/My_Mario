@@ -1,5 +1,5 @@
 """
-Main file for running the game
+Main file for running the rioma
 """
 import os
 from random import randrange
@@ -54,7 +54,7 @@ def get_extra():
 
 def create_level1_map():
     """
-    Initialises level 1 map of game
+    Initialises level 1 map of rioma
     :return:
     """
     # Create the ground for the PLAYER_OBJ
@@ -283,7 +283,7 @@ def launch_stones():
 
 def get_input():
     """
-    Get input from the user and perform corresponding actions in the game
+    Get input from the user and perform corresponding actions in the rioma
     :return:
     """
     getch = c.getch_unix
@@ -294,7 +294,7 @@ def get_input():
             break
 
         if k == ' ':
-            # pause the game
+            # pause the rioma
             c.CONTROL_MUSIC[0].play_music_for_action('Game paused')
             if c.pause.is_set():
                 c.pause.clear()
@@ -322,14 +322,14 @@ def get_input():
 
 def exit_game():
     """
-    Exit the game
+    Exit the rioma
     :return:
     """
 
     os.system("tput cnorm")
     os.system('killall -q aplay 2 >/dev/null')
     os.system('reset')
-    last_string = "Thanks for playing my mario game. Your score: " + str(c.PLAYER_OBJ[0].score)
+    last_string = "Thanks for playing my mario rioma. Your score: " + str(c.PLAYER_OBJ[0].score)
     print(last_string.center(c.COLUMNS))
     os.system('killall -q aplay 2 >/dev/null')
     exit(0)
@@ -338,7 +338,7 @@ def exit_game():
 # Initial Interactive
 def start_screen():
     """
-    Prints the help screen about the game
+    Prints the help screen about the rioma
     :return:
     """
     try:
@@ -352,8 +352,8 @@ def start_screen():
         print("'e' -> to move up_right")
         print("'z' -> to move back_left")
         print("'f' -> to throw stones")
-        print("'SPACE_BAR' -> at any instance of game to pause and to resume")
-        print("'q' -> at any instance of game to quit")
+        print("'SPACE_BAR' -> at any instance of rioma to pause and to resume")
+        print("'q' -> at any instance of rioma to quit")
         input('Press any key to continue.')
     except KeyboardInterrupt:
         os.system('tput cnorm')
@@ -362,7 +362,7 @@ def start_screen():
 
 def run():
     """
-    Starts the game
+    Starts the rioma
     :return:
     """
     start_screen()

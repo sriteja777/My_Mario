@@ -7,7 +7,7 @@ import termios
 def get_keypress():
     """
     Get the singe character typed on terminal on Unix-based systems
-    :return: Single character typed during game
+    :return: Single character typed during rioma
     """
 
     file_desc = sys.stdin.fileno()

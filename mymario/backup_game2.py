@@ -151,7 +151,7 @@ class Game:
 
     def get_input(self):
         """
-        Get input from the user and perform corresponding actions in the game
+        Get input from the user and perform corresponding actions in the rioma
         :return:
         """
         getch = config.getch_unix
@@ -162,7 +162,7 @@ class Game:
                 break
 
             # if k == ' ':
-            #     # pause the game
+            #     # pause the rioma
             #     c.CONTROL_MUSIC[0].play_music_for_action('Game paused')
             #     if c.pause.is_set():
             #         c.pause.clear()

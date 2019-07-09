@@ -288,7 +288,7 @@ class Stones(MovableObjects):
 
 class Enemies(MovableObjects):
     """
-    Class for enemies in the game
+    Class for enemies in the rioma
     """
     def __init__(self, max_x, max_y, min_x, min_y, string, range_x1, range_x2, map_reference=None):
         """

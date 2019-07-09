@@ -1,5 +1,5 @@
 """
-Config file for the game
+Config file for the rioma
 """
 
 import os
@@ -147,7 +147,7 @@ SOUND = True
 def getch_unix():
     """
     Get the singe character typed on terminal on Unix-based systems
-    :return: Single character typed during game
+    :return: Single character typed during rioma
     """
 
     char = sys.stdin.read(1)
