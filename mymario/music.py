@@ -44,7 +44,7 @@ class Music:
         # if SOUND:
         #     return
         if main_thread().is_alive():
-            os.system('aplay -q --process-id-file aplay_pid.txt '
+            os.system('aplay -q --process-id-file /tmp/aplay_pid.txt '
                       + MUSIC_FILES_PATH + filename
                       + '.wav > /dev/null 2>/dev/null')
 
