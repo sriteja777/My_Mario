@@ -60,7 +60,7 @@ class SLevel1Map(Map):
         self.create_moving_bridges()
         self.create_holes()
         self.create_coins()
-        # self.create_enemies()
+        self.create_enemies()
         self.create_extras()
         self.initial_player_position = [{'max_x': 4, 'max_y': self.up_wall.min_y - 1, 'min_x': 3,
                                         'min_y': self.up_wall.min_y - 2},

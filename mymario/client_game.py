@@ -30,6 +30,8 @@ class Game:
         self.screen = server_config['screen']
         nop = server_config['nop']
         game_map = server_config['game_map']
+        self.map = self.get_map_class(game_map)(0, self.screen["rows"], self.screen['columns'])
+        # exit(1)
         self.player_id = 1
         self.num_players = server_config['nop']
         sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=self.screen['rows'], cols=self.screen['columns']))
@@ -40,7 +42,8 @@ class Game:
         self.players = []
 
         self.gameplay_settings = self.configure_gameplay_settings()
-        self.map = self.get_map_class(game_map)(0, self.screen["rows"], self.screen['columns'])
+
+
         move_pointer = False
         for player in range(self.num_players):
             if player == self.player_id:

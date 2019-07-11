@@ -32,12 +32,13 @@ class Game:
         self.num_players = nop
         self.players = []
         self.gameplay_settings = self.configure_gameplay_settings()
-        self.map = self.get_map_class(game_map)(0, self.screen["rows"], self.screen['columns'])
 
         self.server = Server()
         self.server.host()
         self.player_id = 0
         self.server.send({'screen': self.screen, "nop": self.num_players, "game_map": game_map, "id": 1})
+        self.map = self.get_map_class(game_map)(0, self.screen["rows"], self.screen['columns'])
+        # exit(1)
         move_pointer = False
         for player in range(self.num_players):
             if player == self.player_id:

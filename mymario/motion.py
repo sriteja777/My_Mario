@@ -2,7 +2,7 @@
 Contains classes for Movable inherited objects i.e Player, Enemy, Stone, MovingBridge
 """
 from threading import Thread
-from time import sleep
+from time import sleep, time
 
 import config
 from objects import MovableObjects
@@ -203,7 +203,7 @@ class Player(MovableObjects):
             self.time += 10
             return True
         if clashed_with == config.WATER:
-            # return False
+            return False
             if not self.max_x == object_clashed.min_x or not self.min_x == object_clashed.max_x:
                 self.wrong_move()
                 return False
@@ -307,7 +307,7 @@ class Enemies(MovableObjects):
 
         self.thread = Thread(target=self.move_enemy)
         self.thread.daemon = True
-
+        print('\r', self.range_x1, time())
         self.thread.start()
         # print(self.thread.name, self.range_x2, self.range_x1)
 
