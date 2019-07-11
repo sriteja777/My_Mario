@@ -32,6 +32,9 @@ class Map:
         self.coins = []
         # self.control_music = ''
 
+    def control_music(self, player_loc):
+        pass
+
     def view_map(self, reverse=False):
         flag = 1
         lp = 0

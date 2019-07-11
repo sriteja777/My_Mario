@@ -1,0 +1,5 @@
+1. Create debian directory and create necessary files in it
+2. Change the working directory to `/usr/share/rioma/` and append it to the path. Just add the below lines before importing the rioma
+        os.chdir('/usr/share/rioma')
+        sys.path.append('/usr/share/rioma')
+3. Change the path to aplay pid file in the music.py file to /tmp/aplay_pid.txt

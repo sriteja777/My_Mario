@@ -14,7 +14,7 @@ class Player(MovableObjects):
     """
     A class for Player
     """
-    def __init__(self, boundary, string, player_id=-1, map_reference=None):
+    def __init__(self, boundary, string, player_id=-1, map_reference=None, move_pointer=True, check_ends=True):
         """
         Initialises player in the Map
         :param boundary: A dict with initial position of the player having keys
@@ -29,8 +29,8 @@ class Player(MovableObjects):
         self.stones = config.DEFAULT_NO_OF_STONES
         self.score = config.INITIAL_SCORE
         self.time = config.DEFAULT_TIMEOUT
-        self.check_ends = True
-        self.change_pointers = True
+        self.check_ends = check_ends
+        self.change_pointers = move_pointer
 
     def move_down(self):
         """

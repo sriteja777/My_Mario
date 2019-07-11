@@ -1,3 +1,4 @@
+import ast
 import os
 import platform
 import sys
@@ -14,14 +15,16 @@ from controls import Controls
 from motion import Player, Stones
 from objects import Obj
 from music import Music
-
+from utils import to_camel_case
+from network.server import Server
+# from network.client import Clie
 
 msc = Music()
 inc = 0
 
 
 class Game:
-    def __init__(self, nop):
+    def __init__(self, nop, game_map="test_map"):
 
         rows, columns = self.get_terminal_dimensions()
         self.screen = {'rows': rows, 'columns': columns}
@@ -32,12 +35,24 @@ class Game:
         self.num_players = nop
         self.players = []
         self.maps = []
+        self.server = Server()
+        self.server.host()
+        # self.server.send({"nop": nop, te})
         self.gameplay_settings = self.configure_gameplay_settings()
         # os.system('tput civis')
         # print("the ratio is ", columns / nop)
         self.welcome_screen()
+        map_class = None
+        try:
+            map_module = __import__(game_map)
+            map_class = getattr(map_module, to_camel_case(game_map))
+            print(map_class)
+        except (ModuleNotFoundError, AttributeError) as e:
+            print("Sorry given map not found, Strictly follow naming comventions for the map modules.")
+            exit(1)
+
         for num_id in range(nop):
-            self.maps.append(level1_map.Level1Map(num_id, self.screen['rows'],
+            self.maps.append(map_class(num_id, self.screen['rows'],
                                                   int(self.screen['columns'] / nop - 1)))
             self.players.append(
                 Player(self.maps[-1].initial_player_position, config.PLAYER, num_id, self.maps[-1]))
