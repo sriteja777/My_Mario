@@ -4,7 +4,7 @@ import platform
 import sys
 from random import randrange
 from threading import Thread, Timer
-from time import sleep
+from time import sleep, time
 import atexit
 
 import keyboard
@@ -17,6 +17,7 @@ from objects import Obj
 from music import Music
 from utils import to_camel_case, DaemonThread
 from network.client import Client
+import store
 
 inc = 0
 
@@ -30,10 +31,10 @@ class Game:
         self.screen = server_config['screen']
         nop = server_config['nop']
         game_map = server_config['game_map']
-        self.map = self.get_map_class(game_map)(0, self.screen["rows"], self.screen['columns'])
         # exit(1)
         self.player_id = 1
         self.num_players = server_config['nop']
+        mct = server_config["mct"] + self.client.time_diff
         sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=self.screen['rows'], cols=self.screen['columns']))
         # if not self.multi_player_support(nop):
         #     print("Sorry " + str(nop) + " is not supported at present screen aspect ratio.")
@@ -42,8 +43,13 @@ class Game:
         self.players = []
 
         self.gameplay_settings = self.configure_gameplay_settings()
-
-
+        while True:
+            if time() >= mct:
+                break
+        self.map = self.get_map_class(game_map)(0, self.screen["rows"], self.screen['columns'], self.player_id)
+        print("\rActual times")
+        [print('\r', i["range"], i['time'] - self.client.time_diff) for i in store.enemy_times]
+        # exit(1)
         move_pointer = False
         for player in range(self.num_players):
             if player == self.player_id:

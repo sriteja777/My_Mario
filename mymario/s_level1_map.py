@@ -30,7 +30,7 @@ class SLevel1Map(Map):
     A class for level 1
     """
 
-    def __init__(self, map_id, rows, columns):
+    def __init__(self, map_id, rows, columns, player_id):
         """
         Initialises various attributes of level 1
         :param columns:
@@ -66,7 +66,7 @@ class SLevel1Map(Map):
                                         'min_y': self.up_wall.min_y - 2},
                                         {'max_x': 20, 'max_y': self.up_wall.min_y - 1, 'min_x': 19,
                                         'min_y': self.up_wall.min_y - 2}]
-        # self.create_checkpoints()
+        self.create_checkpoints(player_id)
         self.player_crossed_start = False
         self.player_crossed_lake = False
         self.player_crossed_thrones = False
@@ -86,12 +86,12 @@ class SLevel1Map(Map):
             self.player_crossed_thrones = True
             msc.play_music_for_action('Player at end', change=True)
 
-    def create_checkpoints(self):
+    def create_checkpoints(self, player_id):
         """
         Dependencies: initial player position, walls, holes, lakes
         :return:
         """
-        self.checkpoints.append((self.initial_player_position['min_x'], self.initial_player_position['max_y']))
+        self.checkpoints.append((self.initial_player_position[player_id]['min_x'], self.initial_player_position[player_id]['max_y']))
         self.checkpoints.append((self.columns, self.up_wall.min_y - 1))
         self.checkpoints.append((self.holes[1].max_x + 4, self.up_wall.min_y - 1))
         self.checkpoints.append((self.holes[2].max_x + 4, self.up_wall.min_y - 1))
