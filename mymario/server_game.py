@@ -2,6 +2,7 @@ import ast
 import os
 import platform
 import sys
+import time
 from random import randrange
 from threading import Thread, Timer
 from time import sleep
@@ -36,8 +37,13 @@ class Game:
         self.server = Server()
         self.server.host()
         self.player_id = 0
-        self.server.send({'screen': self.screen, "nop": self.num_players, "game_map": game_map, "id": 1})
-        self.map = self.get_map_class(game_map)(0, self.screen["rows"], self.screen['columns'])
+        mct = time.time() + 5
+        self.server.send({'screen': self.screen, "nop": self.num_players, "game_map": game_map, "id": 1, "mct": mct})
+        while True:
+            if time.time() >= mct:
+                break
+
+        self.map = self.get_map_class(game_map)(0, self.screen["rows"], self.screen['columns'], self.player_id)
         # exit(1)
         move_pointer = False
         for player in range(self.num_players):
@@ -69,6 +75,8 @@ class Game:
                 break
         # self.exit()
 
+    # def error_crctn(self):
+    #     self.socket
     def get_up_input_for_player(self, player_id):
         while True:
             if keyboard.is_pressed(self.controls.player[player_id].UP):
