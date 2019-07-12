@@ -7,6 +7,7 @@ from time import sleep, time
 import config
 from objects import MovableObjects
 from music import Music
+import store
 
 msc = Music()
 
@@ -307,6 +308,7 @@ class Enemies(MovableObjects):
 
         self.thread = Thread(target=self.move_enemy)
         self.thread.daemon = True
+        store.enemy_times.append({'range': self.range_x1, 'time': time()})
         print('\r', self.range_x1, time())
         self.thread.start()
         # print(self.thread.name, self.range_x2, self.range_x1)
