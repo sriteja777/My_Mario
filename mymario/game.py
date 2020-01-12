@@ -201,6 +201,8 @@ class Game:
                 break
 
     def move_player(self, player_id):
+        if not self.players[player_id].is_alive:
+            return
         if keyboard.is_pressed(self.controls.player[player_id].LEFT):
             self.players[player_id].move_left()
         if keyboard.is_pressed(self.controls.player[player_id].UP):
@@ -290,7 +292,8 @@ class Game:
         inc += 1
 
     def updates(self):
-        os.system(config.CLEAR_COMMAND)
+        # os.system(config.CLEAR_COMMAND)
+        print('\033[0;0f',end='')
         combined_list = list([self.maps[x].map_array for x in range(self.num_players)])
         skip = False
         if self.gameplay_settings['force_emoji']:
@@ -398,6 +401,6 @@ if __name__ == "__main__":
             ROOT = False
     # print("LINUX: ", LINUX)
     if ROOT:
-        game = Game(3)
+        game = Game(4)
     else:
         game = Game(1)
